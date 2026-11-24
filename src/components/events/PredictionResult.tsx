@@ -3,6 +3,7 @@ import type { PredictResponse } from "@/lib/types";
 import { formatRangeKo } from "@/lib/date";
 import { formatWon } from "@/lib/format";
 import { predictionTotal } from "@/lib/forecast";
+import { tangibleLabel } from "@/lib/home-summary";
 import { CATEGORY_LABEL, EVENT_TYPE_LABEL } from "@/lib/categories";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
@@ -21,7 +22,7 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
             {p.location}
           </span>
         )}
-        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 font-semibold text-ink">
+        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-ai/15 px-2 py-0.5 font-semibold text-ai">
           <Sparkles size={12} aria-hidden />
           {source === "ai" ? "AI 예측" : "목업 예측"}
         </span>
@@ -65,7 +66,9 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
           <ul className="space-y-1 text-sm">
             {p.savingTips.map((tip, i) => (
               <li key={i} className="flex justify-between gap-2">
-                <span className="text-ink-2">{tip.label}</span>
+                <span className="text-ink-2">
+                  {tip.label} <span className="text-xs font-semibold text-flame">{tangibleLabel(tip.amount)} 값</span>
+                </span>
                 <span className="shrink-0 font-medium tabular-nums">-{formatWon(tip.amount)}</span>
               </li>
             ))}

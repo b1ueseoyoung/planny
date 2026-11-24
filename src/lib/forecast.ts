@@ -42,16 +42,6 @@ export function eventCost(
   return { amount: 0, kind: "none" };
 }
 
-/** 날짜별 실제 지출 합계 (캘린더 칸 표시용) */
-export function spendingByDay(data: AppData, month: MonthKey): Record<ISODate, number> {
-  const result: Record<ISODate, number> = {};
-  for (const t of data.transactions) {
-    if (!t.date.startsWith(month)) continue;
-    result[t.date] = (result[t.date] ?? 0) + t.amount;
-  }
-  return result;
-}
-
 /** 잔액으로 예산 상태 판단 */
 export function budgetStatus(balance: number, budget: number): BudgetStatus {
   if (balance < 0) return "over";
@@ -83,10 +73,52 @@ export function routineDailyAverage(data: AppData, today: ISODate): Partial<Reco
 }
 
 /** 아직 오지 않은 일정인지 (오늘 일정은 실제 지출 기록이 없을 때만 예정으로 본다) */
-function isUpcoming(data: AppData, event: CalendarEvent, today: ISODate): boolean {
+export function isUpcoming(data: AppData, event: CalendarEvent, today: ISODate): boolean {
   if (event.startDate > today) return true;
   if (event.startDate < today) return false;
   return !data.transactions.some((t) => t.eventId === event.id);
+}
+
+/** 평소 생활비 하루 평균 (카테고리 합) */
+export function routineDailyTotal(data: AppData, today: ISODate): number {
+  return Object.values(routineDailyAverage(data, today)).reduce((sum, perDay) => sum + (perDay ?? 0), 0);
+}
+
+/** 하루치 돈: 오늘까지는 실제로 쓴 돈, 내일부터는 예상 금액 */
+export interface DaySpend {
+  date: ISODate;
+  amount: number;
+  kind: "actual" | "predicted";
+  /** 이 날에 걸친 일정 */
+  events: CalendarEvent[];
+}
+
+/**
+ * 날짜별 돈 (캘린더 점, 주간 합계, 누적 그래프용).
+ * 내일부터는 평소 생활비 하루 평균 + 그날 시작하는 일정의 예상 비용으로, computeMonthForecast와 같은 기준이다.
+ * 여러 날 일정은 월말 예측과 맞추려고 비용을 시작일에 전부 잡는다.
+ */
+export function dailySpend(data: AppData, from: ISODate, to: ISODate, today: ISODate): DaySpend[] {
+  const routine = routineDailyTotal(data, today);
+  const actual: Record<ISODate, number> = {};
+  for (const t of data.transactions) {
+    if (t.date < from || t.date > to) continue;
+    actual[t.date] = (actual[t.date] ?? 0) + t.amount;
+  }
+
+  const days: DaySpend[] = [];
+  for (let date = from; date <= to; date = addDays(date, 1)) {
+    const events = data.events.filter((e) => e.startDate <= date && date <= e.endDate);
+    if (date <= today) {
+      days.push({ date, amount: actual[date] ?? 0, kind: "actual", events });
+      continue;
+    }
+    const eventsCost = events
+      .filter((e) => e.startDate === date && e.prediction && isUpcoming(data, e, today))
+      .reduce((sum, e) => sum + predictionTotal(e.prediction!), 0);
+    days.push({ date, amount: Math.round(routine + eventsCost), kind: "predicted", events });
+  }
+  return days;
 }
 
 /**

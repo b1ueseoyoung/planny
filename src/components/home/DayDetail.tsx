@@ -5,7 +5,7 @@ import type { CalendarEvent, ISODate } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { dDayLabel, formatDateKo, formatRangeKo } from "@/lib/date";
 import { formatCompact, formatWon } from "@/lib/format";
-import { eventCost } from "@/lib/forecast";
+import { eventCost, routineDailyTotal } from "@/lib/forecast";
 import { CATEGORY_LABEL, EVENT_TYPE_LABEL } from "@/lib/categories";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
@@ -17,6 +17,8 @@ export function DayDetail({ date }: { date: ISODate }) {
   const events = data.events.filter((e) => e.startDate <= date && date <= e.endDate);
   const transactions = data.transactions.filter((t) => t.date === date);
   const dayTotal = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const isFuture = date > today;
+  const routine = isFuture ? routineDailyTotal(data, today) : 0;
 
   return (
     <Card>
@@ -40,6 +42,19 @@ export function DayDetail({ date }: { date: ISODate }) {
         </ul>
       )}
 
+      {routine > 0 && (
+        <div className={`flex items-center justify-between gap-3 ${events.length > 0 ? "mt-3" : ""}`}>
+          <div>
+            <p className="text-sm font-medium">평소 생활비</p>
+            <p className="text-xs text-muted">최근 60일 하루 평균</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-muted">예상</p>
+            <p className="text-sm font-semibold tabular-nums">{formatWon(Math.round(routine))}</p>
+          </div>
+        </div>
+      )}
+
       {transactions.length > 0 && (
         <div className={events.length > 0 ? "mt-4" : ""}>
           <p className="mb-2 text-xs font-medium text-muted">쓴 돈 · {formatWon(dayTotal)}</p>
@@ -58,9 +73,9 @@ export function DayDetail({ date }: { date: ISODate }) {
         </div>
       )}
 
-      {events.length === 0 && transactions.length === 0 && (
+      {events.length === 0 && transactions.length === 0 && routine === 0 && (
         <p className="py-4 text-center text-sm text-muted">
-          {date > today ? "일정을 추가하면 예상 지출을 알려드려요" : "기록된 지출이 없어요"}
+          {isFuture ? "일정을 추가하면 예상 지출을 알려드려요" : "기록된 지출이 없어요"}
         </p>
       )}
       {/* TODO: 지출 직접 기록하기 (금액·카테고리·메모) */}
