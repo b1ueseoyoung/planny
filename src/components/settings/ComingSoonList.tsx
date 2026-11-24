@@ -3,22 +3,22 @@
 // TODO: 고정 지출 관리 → 정기결제 타입을 추가하고 forecast에서 결제일 기준으로 반영
 // TODO: AI 연결 상태 → GET /api/status 같은 라우트로 키 설정 여부를 받아 보여주기
 
-import { FileSpreadsheet, Repeat, Sparkles, type LucideIcon } from "lucide-react";
+import { IconFileSpreadsheet, IconRepeat, IconSparkles, type TablerIcon } from "@tabler/icons-react";
 import { Card, CardTitle } from "@/components/ui/Card";
 
-const ITEMS: { icon: LucideIcon; title: string; description: string }[] = [
+const ITEMS: { icon: TablerIcon; title: string; description: string }[] = [
   {
-    icon: FileSpreadsheet,
+    icon: IconFileSpreadsheet,
     title: "카드 내역 CSV 가져오기",
     description: "카드사·은행 앱에서 받은 내역 파일을 올리면 소비 기록으로 바꿔 줘요.",
   },
   {
-    icon: Repeat,
+    icon: IconRepeat,
     title: "고정 지출(월세·구독) 관리",
     description: "매달 같은 날 나가는 돈을 따로 등록해서 예측을 더 정확하게 해요.",
   },
   {
-    icon: Sparkles,
+    icon: IconSparkles,
     title: "AI 연결 상태",
     description:
       "프로젝트 폴더의 .env.local에 ANTHROPIC_API_KEY를 넣으면 목업 대신 실제 AI가 일정 비용을 예측해요.",

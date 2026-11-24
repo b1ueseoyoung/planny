@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Flame } from "lucide-react";
+import { IconArrowUpRight, IconFlame } from "@tabler/icons-react";
 import type { AppData, ISODate, MonthForecast } from "@/lib/types";
 import { monthEnd, monthKey, monthStart } from "@/lib/date";
 import { formatCompact, formatSignedWon } from "@/lib/format";
@@ -149,7 +149,7 @@ function RiskTile({ forecast, isPast }: { forecast: MonthForecast; isPast: boole
           className="mt-3 inline-flex items-center gap-0.5 text-xs font-semibold text-ink"
         >
           조정해 보기
-          <ArrowUpRight size={13} aria-hidden />
+          <IconArrowUpRight size={13} aria-hidden />
         </Link>
       ) : (
         <p className="mt-3 text-xs text-muted">{isPast ? "지난 달이에요" : "이대로면 괜찮아요"}</p>
@@ -165,7 +165,7 @@ function StreakTile({ data, today }: { data: AppData; today: ISODate }) {
   return (
     <div className="rounded-3xl bg-flame p-4 text-on-accent">
       <p className="flex items-center gap-1 text-xs font-semibold opacity-75">
-        <Flame size={14} aria-hidden />
+        <IconFlame size={14} aria-hidden />
         하루 예산 지킨 날
       </p>
       <p className="mt-2 text-2xl font-bold">{streak > 0 ? `연속 ${streak}일` : "오늘부터 다시"}</p>

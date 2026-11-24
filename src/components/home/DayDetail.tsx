@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { IconPlus } from "@tabler/icons-react";
 import type { CalendarEvent, ISODate } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { dDayLabel, formatDateKo, formatRangeKo } from "@/lib/date";
@@ -25,7 +25,7 @@ export function DayDetail({ date }: { date: ISODate }) {
       <CardTitle
         right={
           <LinkButton href={`/events/new?date=${date}`} variant="secondary" className="!h-8 !px-3 !text-xs">
-            <Plus size={14} aria-hidden />
+            <IconPlus size={14} aria-hidden />
             일정
           </LinkButton>
         }

@@ -5,6 +5,7 @@ import { BudgetForm } from "./BudgetForm";
 import { ProfileForm } from "./ProfileForm";
 import { DataSection } from "./DataSection";
 import { ComingSoonList } from "./ComingSoonList";
+import { ThemeSection } from "./ThemeSection";
 
 export function SettingsView() {
   // 샘플 데이터로 초기화하면 입력칸도 새 값으로 다시 그리기 위한 키
@@ -14,6 +15,7 @@ export function SettingsView() {
     <div className="space-y-4 px-5">
       <BudgetForm key={`budget-${formKey}`} />
       <ProfileForm key={`profile-${formKey}`} />
+      <ThemeSection />
       <DataSection onReset={() => setFormKey((k) => k + 1)} />
       <ComingSoonList />
     </div>

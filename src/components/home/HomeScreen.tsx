@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { IconChevronLeft, IconChevronRight, IconPlus } from "@tabler/icons-react";
 import { useAppData } from "@/lib/store";
 import { addMonths, formatMonthKo, monthKey, monthStart } from "@/lib/date";
 import { computeMonthForecast } from "@/lib/forecast";
@@ -65,7 +65,7 @@ export function HomeScreen() {
               onClick={() => moveMonth(-1)}
               className="grid size-10 place-items-center rounded-full text-ink-2 hover:bg-surface-2"
             >
-              <ChevronLeft size={22} aria-hidden />
+              <IconChevronLeft size={22} aria-hidden />
             </button>
             <button
               type="button"
@@ -73,7 +73,7 @@ export function HomeScreen() {
               onClick={() => moveMonth(1)}
               className="grid size-10 place-items-center rounded-full text-ink-2 hover:bg-surface-2"
             >
-              <ChevronRight size={22} aria-hidden />
+              <IconChevronRight size={22} aria-hidden />
             </button>
           </div>
         ) : (
@@ -104,7 +104,7 @@ export function HomeScreen() {
           size="lg"
           className="pointer-events-auto rounded-full shadow-lg shadow-black/40"
         >
-          <Plus size={20} aria-hidden />
+          <IconPlus size={20} aria-hidden />
           일정 추가
         </LinkButton>
       </div>

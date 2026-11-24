@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronDown, ChevronUp, TrendingDown, TrendingUp } from "lucide-react";
+import { IconChevronDown, IconChevronUp, IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 import type { AppData, ISODate, MonthForecast } from "@/lib/types";
 import { monthKey } from "@/lib/date";
 import { formatCompact } from "@/lib/format";
@@ -43,9 +43,9 @@ export function WeekHeroCard({
       ) : (
         <BigAmount label="이번 주 예상 지출" amount={week.total}>
           {diff > 0 ? (
-            <TrendingUp size={16} className="text-series-2" aria-hidden />
+            <IconTrendingUp size={16} className="text-series-2" aria-hidden />
           ) : (
-            <TrendingDown size={16} className="text-good" aria-hidden />
+            <IconTrendingDown size={16} className="text-good" aria-hidden />
           )}
           평소 한 주보다 {formatCompact(Math.abs(diff))}원 {diff > 0 ? "많아요" : "적어요"}
         </BigAmount>
@@ -72,7 +72,7 @@ export function WeekHeroCard({
         className="mx-auto mt-3 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-muted hover:bg-surface-2"
       >
         {expanded ? "주간으로 접기" : "이번 달 전체 보기"}
-        {expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
+        {expanded ? <IconChevronUp size={14} aria-hidden /> : <IconChevronDown size={14} aria-hidden />}
       </button>
     </Card>
   );

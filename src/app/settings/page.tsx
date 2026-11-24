@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function SettingsPage() {
   return (
     <>
-      <PageHeader title="설정" subtitle="예산과 데이터를 관리해요" />
+      <PageHeader title="설정" subtitle="예산, 화면 테마, 데이터를 관리해요" />
       <ClientOnly>
         <SettingsView />
       </ClientOnly>

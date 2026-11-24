@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { IconCheck } from "@tabler/icons-react";
 import type { DaySpend } from "@/lib/forecast";
 import { formatDateKo } from "@/lib/date";
 import { formatCompact } from "@/lib/format";
@@ -30,7 +30,7 @@ export function DayDot({
   onAccent?: boolean;
 }) {
   if (day.amount <= 0) {
-    if (day.kind === "actual" && !isToday) return <Check size={12} strokeWidth={3} className="text-good" aria-hidden />;
+    if (day.kind === "actual" && !isToday) return <IconCheck size={12} stroke={3} className="text-good" aria-hidden />;
     return <span className={`size-[5px] rounded-full ${onAccent ? "bg-white/60" : "bg-surface-2"}`} aria-hidden />;
   }
 

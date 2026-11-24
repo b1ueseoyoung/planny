@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { IconCheck } from "@tabler/icons-react";
 import type { AppData, ISODate, MonthKey } from "@/lib/types";
 import { dayOfWeek, daysInMonth, formatDateKo, monthEnd, monthStart, WEEKDAYS_KO } from "@/lib/date";
 import { formatCompact } from "@/lib/format";
@@ -135,7 +135,7 @@ function Legend() {
         일정
       </li>
       <li className="flex items-center gap-1.5">
-        <Check size={11} strokeWidth={3} className="text-good" aria-hidden />
+        <IconCheck size={11} stroke={3} className="text-good" aria-hidden />
         무지출
       </li>
       <li className="flex items-center gap-1.5">

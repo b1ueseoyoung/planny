@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ChevronLeft } from "lucide-react";
+import { IconChevronLeft } from "@tabler/icons-react";
 
 /** 화면 상단 제목줄. backHref가 있으면 뒤로가기 버튼을 보여준다. */
 export function PageHeader({
@@ -22,7 +22,7 @@ export function PageHeader({
           aria-label="뒤로"
           className="-ml-2 grid size-9 place-items-center rounded-full text-ink-2 hover:bg-surface-2"
         >
-          <ChevronLeft size={24} aria-hidden />
+          <IconChevronLeft size={24} aria-hidden />
         </Link>
       )}
       <div className="min-w-0 flex-1">

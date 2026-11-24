@@ -1,4 +1,12 @@
-import { Cloud, CloudRain, CloudSun, Info, Sparkles, Sun, type LucideIcon } from "lucide-react";
+import {
+  IconCloud,
+  IconCloudRain,
+  IconHaze,
+  IconInfoCircle,
+  IconSparkles,
+  IconSun,
+  type TablerIcon,
+} from "@tabler/icons-react";
 import type { AppData, CalendarEvent, ISODate, MonthForecast } from "@/lib/types";
 import { dDayLabel } from "@/lib/date";
 import { formatCompact } from "@/lib/format";
@@ -13,11 +21,11 @@ import {
   type WeekSummary,
 } from "@/lib/home-summary";
 
-const WEATHER_ICON: Record<SpendWeather, LucideIcon> = {
-  clear: Sun,
-  partly: CloudSun,
-  cloudy: Cloud,
-  rain: CloudRain,
+const WEATHER_ICON: Record<SpendWeather, TablerIcon> = {
+  clear: IconSun,
+  partly: IconHaze,
+  cloudy: IconCloud,
+  rain: IconCloudRain,
 };
 
 /** 예측 카드: 이번 주 소비 날씨, 다가오는 가장 큰 지출과 근거, 아끼는 방법(체감 금액으로) */
@@ -42,7 +50,7 @@ export function AiInsightCard({
     <section aria-label="예측 요약" className="rounded-3xl bg-linear-to-br from-ai/25 via-surface to-surface p-5 ring-1 ring-ai/25">
       <div className="flex items-center justify-between gap-2">
         <span className="inline-flex items-center gap-1 rounded-full bg-ai/15 px-2.5 py-1 text-xs font-bold text-ai">
-          <Sparkles size={13} aria-hidden />
+          <IconSparkles size={13} aria-hidden />
           {chip}
         </span>
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-2">
@@ -79,7 +87,7 @@ function EventInsight({ event, today }: { event: CalendarEvent; today: ISODate }
       </p>
       {p.reasons[0] && (
         <p className="mt-3 flex gap-1.5 text-xs leading-5 text-ink-2">
-          <Info size={14} className="mt-0.5 shrink-0" aria-hidden />
+          <IconInfoCircle size={14} className="mt-0.5 shrink-0" aria-hidden />
           {p.reasons[0]}
         </p>
       )}

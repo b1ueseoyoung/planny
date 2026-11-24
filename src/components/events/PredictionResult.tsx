@@ -1,4 +1,4 @@
-import { MapPin, Sparkles } from "lucide-react";
+import { IconMapPin, IconSparkles } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
 import { formatRangeKo } from "@/lib/date";
 import { formatWon } from "@/lib/format";
@@ -18,12 +18,12 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
         <span className="rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">{EVENT_TYPE_LABEL[p.eventType]}</span>
         {p.location && (
           <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
-            <MapPin size={12} aria-hidden />
+            <IconMapPin size={12} aria-hidden />
             {p.location}
           </span>
         )}
         <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-ai/15 px-2 py-0.5 font-semibold text-ai">
-          <Sparkles size={12} aria-hidden />
+          <IconSparkles size={12} aria-hidden />
           {source === "ai" ? "AI 예측" : "목업 예측"}
         </span>
       </div>
