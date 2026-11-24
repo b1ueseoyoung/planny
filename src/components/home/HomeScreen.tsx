@@ -31,13 +31,14 @@ export function HomeScreen() {
     setSelected(next === monthKey(today) ? today : monthStart(next));
   }
 
-  const greeting = data.userName === "나" ? "내 소비 캘린더" : `${data.userName}님의 소비 캘린더`;
-
   return (
     <div className="space-y-4 px-5 pt-5">
       <header className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted">{greeting}</p>
+          <p className="text-sm text-muted">
+            <span className="font-bold text-primary">Planny</span>
+            {data.userName !== "나" && ` · ${data.userName}님`}
+          </p>
           <h1 className="text-2xl font-bold">{formatMonthKo(month)}</h1>
         </div>
         <div className="flex gap-1">

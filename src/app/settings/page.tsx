@@ -4,7 +4,7 @@ import { ClientOnly } from "@/components/layout/ClientOnly";
 import { SettingsView } from "@/components/settings/SettingsView";
 
 export const metadata: Metadata = {
-  title: "설정 | 미래 소비 캘린더",
+  title: "설정",
 };
 
 /** 설정 탭: 예산·이름·데이터 관리 */
