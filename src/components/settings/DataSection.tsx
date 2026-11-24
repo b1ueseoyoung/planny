@@ -3,7 +3,7 @@
 // TODO: 데이터 내보내기/가져오기 (JSON 파일)
 // TODO: 여러 기기에서 쓰려면 서버 DB로 옮기기
 
-import { RotateCcw } from "lucide-react";
+import { IconRotate } from "@tabler/icons-react";
 import { useAppData } from "@/lib/store";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -33,7 +33,7 @@ export function DataSection({ onReset }: { onReset: () => void }) {
       </dl>
       <p className="mt-3 text-xs text-muted">데이터는 지금 쓰는 브라우저에만 저장돼요.</p>
       <Button variant="secondary" full className="mt-4" onClick={handleReset}>
-        <RotateCcw size={16} aria-hidden />
+        <IconRotate size={16} aria-hidden />
         샘플 데이터로 초기화
       </Button>
     </Card>

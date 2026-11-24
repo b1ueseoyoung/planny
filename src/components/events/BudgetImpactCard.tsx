@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { IconArrowRight } from "@tabler/icons-react";
 import type { EventPrediction } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { monthKey } from "@/lib/date";
@@ -27,7 +27,7 @@ export function BudgetImpactCard({ prediction }: { prediction: EventPrediction }
           <p className="text-xs text-muted">추가 전</p>
           <p className="text-base font-semibold text-ink-2 tabular-nums">{formatSignedWon(before.projectedBalance)}</p>
         </div>
-        <ArrowRight size={18} className="mb-1 text-muted" aria-hidden />
+        <IconArrowRight size={18} className="mb-1 text-muted" aria-hidden />
         <div>
           <p className="text-xs text-muted">추가 후 월말 예상 잔액</p>
           <p className="text-2xl font-bold tabular-nums">{formatSignedWon(after.projectedBalance)}</p>

@@ -2,11 +2,13 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AppShell } from "@/components/layout/AppShell";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
-const pretendard = localFont({
-  src: "./fonts/PretendardVariable.woff2",
-  variable: "--font-pretendard",
-  weight: "45 920",
+// Wanted Sans (OFL-1.1, 라이선스 전문은 fonts/WantedSans-OFL.txt)
+const wantedSans = localFont({
+  src: "./fonts/WantedSansVariable.woff2",
+  variable: "--font-wanted-sans",
+  weight: "400 1000",
   display: "swap",
 });
 
@@ -20,15 +22,21 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f4f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0d0d" },
-  ],
+  themeColor: "#0b0b0c",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${pretendard.variable} h-full antialiased`}>
+    // data-theme은 <head> 스크립트가 저장된 테마로 바꾸므로 suppressHydrationWarning이 필요하다
+    <html
+      lang="ko"
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${wantedSans.variable} h-full antialiased`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-full bg-page font-sans text-ink">
         <AppShell>{children}</AppShell>
       </body>

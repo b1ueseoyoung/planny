@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LoaderCircle, Sparkles } from "lucide-react";
+import { IconLoader2, IconSparkles } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { fetchPrediction } from "@/lib/api";
@@ -105,12 +105,12 @@ export function NewEventScreen() {
               <Button type="submit" size="lg" full disabled={!text.trim() || step === "loading"}>
                 {step === "loading" ? (
                   <>
-                    <LoaderCircle size={18} className="animate-spin" aria-hidden />
+                    <IconLoader2 size={18} className="animate-spin" aria-hidden />
                     과거 소비와 비슷한 일정을 살펴보는 중…
                   </>
                 ) : (
                   <>
-                    <Sparkles size={18} aria-hidden />
+                    <IconSparkles size={18} aria-hidden />
                     예상 지출 분석하기
                   </>
                 )}

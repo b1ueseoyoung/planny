@@ -1,8 +1,9 @@
-import type { AppData, CalendarEvent, ISODate, MonthKey } from "@/lib/types";
-import { addDays, dayOfWeek, daysInMonth, formatDateKo, monthEnd, monthStart, WEEKDAYS_KO } from "@/lib/date";
+import { IconCheck } from "@tabler/icons-react";
+import type { AppData, ISODate, MonthKey } from "@/lib/types";
+import { dayOfWeek, daysInMonth, formatDateKo, monthEnd, monthStart, WEEKDAYS_KO } from "@/lib/date";
 import { formatCompact } from "@/lib/format";
-import { spendingByDay } from "@/lib/forecast";
-import { Card } from "@/components/ui/Card";
+import { dailySpend, type DaySpend } from "@/lib/forecast";
+import { DayDot, daySpendLabel } from "./DayDot";
 
 interface Props {
   data: AppData;
@@ -12,103 +13,139 @@ interface Props {
   onSelect: (date: ISODate) => void;
 }
 
-/** 월간 달력: 지난 날은 쓴 돈, 일정이 있는 날은 일정 이름을 보여준다 */
+/** 점 히트맵 월간 달력: 날짜마다 점 하나, 고른 날엔 금액 툴팁 */
 export function MonthCalendar({ data, month, today, selected, onSelect }: Props) {
-  const spending = spendingByDay(data, month);
-  const eventsByDay = groupEventsByDay(data.events, month);
-
-  const cells: (ISODate | null)[] = Array(dayOfWeek(monthStart(month))).fill(null);
-  for (let d = 1; d <= daysInMonth(month); d++) cells.push(`${month}-${String(d).padStart(2, "0")}`);
-  while (cells.length % 7) cells.push(null);
+  const days = dailySpend(data, monthStart(month), monthEnd(month), today);
+  const dailyBudget = data.budget / daysInMonth(month);
+  const offset = dayOfWeek(monthStart(month));
 
   return (
-    <Card className="!p-3">
+    <div>
       <div className="grid grid-cols-7 text-center text-xs font-medium text-muted">
         {WEEKDAYS_KO.map((w, i) => (
-          <div key={w} className={`py-2 ${i === 0 ? "text-critical" : i === 6 ? "text-primary" : ""}`}>
+          <div key={w} className={`pb-2 ${i === 0 ? "text-critical" : i === 6 ? "text-primary" : ""}`}>
             {w}
           </div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-y-1">
-        {cells.map((date, i) =>
-          date ? (
-            <DayCell
-              key={date}
-              date={date}
-              isToday={date === today}
-              isSelected={date === selected}
-              spent={date <= today ? spending[date] ?? 0 : 0}
-              events={eventsByDay[date] ?? []}
-              onSelect={onSelect}
-            />
-          ) : (
-            <div key={`blank-${i}`} />
-          ),
-        )}
+        {Array.from({ length: offset }, (_, i) => (
+          <div key={`blank-${i}`} />
+        ))}
+        {days.map((day, i) => (
+          <DayCell
+            key={day.date}
+            day={day}
+            index={offset + i}
+            dailyBudget={dailyBudget}
+            isToday={day.date === today}
+            isSelected={day.date === selected}
+            onSelect={onSelect}
+          />
+        ))}
       </div>
-    </Card>
+      <Legend />
+    </div>
   );
 }
 
 function DayCell({
-  date,
+  day,
+  index,
+  dailyBudget,
   isToday,
   isSelected,
-  spent,
-  events,
   onSelect,
 }: {
-  date: ISODate;
+  day: DaySpend;
+  /** 달력 격자에서의 위치 (툴팁 방향 정하기용) */
+  index: number;
+  dailyBudget: number;
   isToday: boolean;
   isSelected: boolean;
-  spent: number;
-  events: CalendarEvent[];
   onSelect: (date: ISODate) => void;
 }) {
-  const day = Number(date.slice(8));
-  const label = [formatDateKo(date), spent > 0 && `지출 ${formatCompact(spent)}원`, events.length > 0 && `일정 ${events.length}개`]
-    .filter(Boolean)
-    .join(", ");
+  const isPast = day.kind === "actual" && !isToday;
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(date)}
-      aria-label={label}
-      aria-pressed={isSelected}
-      className={`flex min-h-16 flex-col items-center gap-0.5 rounded-xl px-0.5 pb-1 pt-1 ${
-        isSelected ? "bg-surface-2" : "hover:bg-surface-2/60"
-      }`}
-    >
-      <span
-        className={`grid size-7 place-items-center rounded-full text-sm ${
-          isToday ? "bg-primary font-semibold text-white" : "text-ink"
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => onSelect(day.date)}
+        aria-label={daySpendLabel(day)}
+        aria-pressed={isSelected}
+        className={`flex h-14 w-full flex-col items-center gap-1 rounded-2xl pt-1.5 ${
+          isSelected ? "bg-surface-2 ring-1 ring-line" : "hover:bg-surface-2/60"
         }`}
       >
-        {day}
-      </span>
-      {spent > 0 && <span className="text-[10px] leading-3 text-muted tabular-nums">{formatCompact(spent)}</span>}
-      {events.slice(0, 2).map((e) => (
-        <span key={e.id} className="w-full truncate rounded-md bg-series-2/15 px-1 text-[10px] leading-4 text-ink">
-          {e.title}
+        <span
+          className={`grid size-7 place-items-center rounded-full text-[13px] tabular-nums ${
+            isToday ? "bg-primary font-bold text-white" : isPast ? "text-ink-2" : "text-ink"
+          }`}
+        >
+          {Number(day.date.slice(8))}
         </span>
-      ))}
-      {events.length > 2 && <span className="text-[10px] leading-3 text-muted">+{events.length - 2}</span>}
-    </button>
+        <span className="flex h-4 items-center justify-center">
+          <DayDot day={day} dailyBudget={dailyBudget} isToday={isToday} />
+        </span>
+      </button>
+      {isSelected && <DayTooltip day={day} index={index} />}
+    </div>
   );
 }
 
-/** 여러 날 일정은 걸친 모든 날짜에 표시 */
-function groupEventsByDay(events: CalendarEvent[], month: MonthKey): Record<ISODate, CalendarEvent[]> {
-  const start = monthStart(month);
-  const end = monthEnd(month);
-  const result: Record<ISODate, CalendarEvent[]> = {};
-  for (const e of events) {
-    if (e.endDate < start || e.startDate > end) continue;
-    for (let d = e.startDate < start ? start : e.startDate; d <= e.endDate && d <= end; d = addDays(d, 1)) {
-      (result[d] ??= []).push(e);
-    }
-  }
-  return result;
+/** 고른 날 위(첫 줄이면 아래)에 뜨는 금액 툴팁 */
+function DayTooltip({ day, index }: { day: DaySpend; index: number }) {
+  const col = index % 7;
+  const vertical = index < 7 ? "top-full mt-1" : "bottom-full mb-1";
+  const horizontal = col <= 1 ? "left-0" : col >= 5 ? "right-0" : "left-1/2 -translate-x-1/2";
+  const [first, ...rest] = day.events;
+  const money = day.amount > 0 ? `${day.kind === "actual" ? "쓴 돈" : "예상"} ${formatCompact(day.amount)}원` : "지출 없음";
+
+  return (
+    <div
+      aria-hidden
+      className={`pointer-events-none absolute z-10 w-max max-w-44 rounded-xl bg-ink px-3 py-2 text-xs text-page shadow-lg shadow-black/40 ${vertical} ${horizontal}`}
+    >
+      <p className="font-bold">
+        {formatDateKo(day.date)} {money}
+      </p>
+      {first && (
+        <p className="mt-0.5 truncate opacity-70">
+          {first.title}
+          {rest.length > 0 ? ` 외 ${rest.length}개` : ""}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function Legend() {
+  return (
+    <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-line pt-3 text-[11px] text-ink-2">
+      <li className="flex items-center gap-1.5">
+        <span className="size-[9px] rounded-full bg-primary" aria-hidden />쓴 돈
+      </li>
+      <li className="flex items-center gap-1.5">
+        <span className="size-[9px] rounded-full border-[1.5px] border-dashed border-primary bg-primary/15" aria-hidden />
+        예상
+      </li>
+      <li className="flex items-center gap-1.5">
+        <span className="size-[9px] rounded-full bg-series-2" aria-hidden />
+        일정
+      </li>
+      <li className="flex items-center gap-1.5">
+        <IconCheck size={11} stroke={3} className="text-good" aria-hidden />
+        무지출
+      </li>
+      <li className="flex items-center gap-1.5">
+        <span className="flex items-center gap-0.5" aria-hidden>
+          <span className="size-[5px] rounded-full bg-muted" />
+          <span className="size-[8px] rounded-full bg-muted" />
+          <span className="size-[11px] rounded-full bg-muted" />
+        </span>
+        하루 예산 대비 크기
+      </li>
+    </ul>
+  );
 }

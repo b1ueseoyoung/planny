@@ -1,4 +1,4 @@
-import { Lightbulb, TrendingDown, TrendingUp } from "lucide-react";
+import { IconBulb, IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 import type { InsightReport } from "@/lib/insights";
 import { formatCompact, formatWon } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
@@ -16,9 +16,9 @@ export function SummaryCard({ report }: { report: InsightReport }) {
       {report.previousTotal > 0 && diff !== 0 && (
         <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-2">
           {more ? (
-            <TrendingUp size={16} className="text-critical" aria-hidden />
+            <IconTrendingUp size={16} className="text-critical" aria-hidden />
           ) : (
-            <TrendingDown size={16} className="text-good" aria-hidden />
+            <IconTrendingDown size={16} className="text-good" aria-hidden />
           )}
           이전 {report.days}일보다 {formatCompact(Math.abs(diff))}원 {more ? "더 썼어요" : "덜 썼어요"}
         </p>
@@ -28,7 +28,7 @@ export function SummaryCard({ report }: { report: InsightReport }) {
         <ul className="mt-4 space-y-2">
           {report.highlights.map((line) => (
             <li key={line} className="flex gap-2 rounded-2xl bg-surface-2 px-3 py-2.5 text-sm">
-              <Lightbulb size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
+              <IconBulb size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
               {line}
             </li>
           ))}

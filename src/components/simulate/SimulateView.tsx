@@ -7,7 +7,7 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Lightbulb, PiggyBank, RotateCcw } from "lucide-react";
+import { IconBulb, IconPigMoney, IconRotate } from "@tabler/icons-react";
 import { useAppData } from "@/lib/store";
 import { addMonths, monthKey } from "@/lib/date";
 import { computeMonthForecast } from "@/lib/forecast";
@@ -83,7 +83,7 @@ function Simulator({ initialMonth }: { initialMonth: MonthKey | null }) {
         </Card>
       ) : categories.length === 0 ? (
         <Card className="text-center">
-          <PiggyBank size={32} className="mx-auto text-ink-2" aria-hidden />
+          <IconPigMoney size={32} className="mx-auto text-ink-2" aria-hidden />
           <p className="mt-2 text-[15px] font-semibold text-ink">아직 줄여 볼 생활비 기록이 없어요</p>
           <p className="mt-1 text-sm text-ink-2">소비 내역이 쌓이면 항목별로 줄여 볼 수 있어요.</p>
         </Card>
@@ -99,7 +99,7 @@ function Simulator({ initialMonth }: { initialMonth: MonthKey | null }) {
           ) : (
             base.status === "safe" && (
               <Card className="flex gap-3">
-                <Lightbulb size={20} className="mt-0.5 shrink-0 text-ink-2" aria-hidden />
+                <IconBulb size={20} className="mt-0.5 shrink-0 text-ink-2" aria-hidden />
                 <p className="text-sm text-ink-2">
                   이 달은 예산 안이라 꼭 줄이지 않아도 괜찮아요. 더 모으고 싶다면 아래에서 줄여 보세요.
                 </p>
@@ -111,7 +111,7 @@ function Simulator({ initialMonth }: { initialMonth: MonthKey | null }) {
             <CardTitle
               right={
                 <Button variant="ghost" onClick={() => setAdjustments({})} disabled={!hasAdjustments}>
-                  <RotateCcw size={16} aria-hidden />
+                  <IconRotate size={16} aria-hidden />
                   초기화
                 </Button>
               }

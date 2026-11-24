@@ -1,8 +1,9 @@
-import { MapPin, Sparkles, Users } from "lucide-react";
+import { IconMapPin, IconSparkles, IconUsers } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
 import { formatRangeKo } from "@/lib/date";
 import { formatWon } from "@/lib/format";
 import { predictionTotal } from "@/lib/forecast";
+import { tangibleLabel } from "@/lib/home-summary";
 import { CATEGORY_LABEL, EVENT_TYPE_LABEL } from "@/lib/categories";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
@@ -17,18 +18,18 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
         <span className="rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">{EVENT_TYPE_LABEL[p.eventType]}</span>
         {p.location && (
           <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
-            <MapPin size={12} aria-hidden />
+            <IconMapPin size={12} aria-hidden />
             {p.location}
           </span>
         )}
         {p.people && p.people.length > 0 && (
           <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
-            <Users size={12} aria-hidden />
+            <IconUsers size={12} aria-hidden />
             {p.people.join(", ")}
           </span>
         )}
-        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 font-semibold text-ink">
-          <Sparkles size={12} aria-hidden />
+        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-ai/15 px-2 py-0.5 font-semibold text-ai">
+          <IconSparkles size={12} aria-hidden />
           {source === "ai" ? "AI 예측" : "목업 예측"}
         </span>
       </div>
@@ -71,7 +72,9 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
           <ul className="space-y-1 text-sm">
             {p.savingTips.map((tip, i) => (
               <li key={i} className="flex justify-between gap-2">
-                <span className="text-ink-2">{tip.label}</span>
+                <span className="text-ink-2">
+                  {tip.label} <span className="text-xs font-semibold text-flame">{tangibleLabel(tip.amount)} 값</span>
+                </span>
                 <span className="shrink-0 font-medium tabular-nums">-{formatWon(tip.amount)}</span>
               </li>
             ))}

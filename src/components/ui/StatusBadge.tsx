@@ -1,11 +1,11 @@
-import { CircleCheck, CircleExclamationPoint, TriangleExclamationPoint } from "lucide-react";
+import { IconAlertCircle, IconAlertTriangle, IconCircleCheck } from "@tabler/icons-react";
 import type { BudgetStatus } from "@/lib/types";
 
 /** 예산 상태 표시. 색만으로 구분하지 않도록 아이콘과 글자를 항상 같이 보여준다. */
 const STATUS = {
-  safe: { label: "여유", icon: CircleCheck, className: "text-good" },
-  tight: { label: "빠듯", icon: CircleExclamationPoint, className: "text-warning" },
-  over: { label: "초과 예상", icon: TriangleExclamationPoint, className: "text-critical" },
+  safe: { label: "여유", icon: IconCircleCheck, className: "text-good" },
+  tight: { label: "빠듯", icon: IconAlertCircle, className: "text-warning" },
+  over: { label: "초과 예상", icon: IconAlertTriangle, className: "text-critical" },
 } as const;
 
 export function StatusBadge({ status }: { status: BudgetStatus }) {

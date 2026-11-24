@@ -27,11 +27,11 @@ cp .env.example .env.local
 
 | 경로 | 화면 | 컴포넌트 |
 | --- | --- | --- |
-| `/` | 홈: 월말 예상 잔액, 달력, 고른 날의 일정·지출, 다가오는 일정 | `components/home/` |
+| `/` | 홈: 이번 주 예상 지출과 주간 날짜 줄(펼치면 점 히트맵 월 달력), 고른 날의 일정·지출, 예측 타일, 예측 카드, 다가오는 지출, 카테고리별 | `components/home/` |
 | `/insights` | 분석: 최근 30일 카테고리별 지출, 요일별 패턴, 자주 가는 곳, 일정 종류별 평균 | `components/insights/` |
 | `/events/new` | 일정 추가: 문장 입력 → 예상 지출 → 예산 영향 → 저장 | `components/events/` |
 | `/simulate` | 조정: 카테고리별로 줄여보는 시뮬레이션 | `components/simulate/` |
-| `/settings` | 설정: 월 예산, 이름, 샘플 데이터 초기화 | `components/settings/` |
+| `/settings` | 설정: 월 예산, 이름, 화면 테마(시스템, 다크, 라이트), 샘플 데이터 초기화 | `components/settings/` |
 
 ## 폴더 구조
 
@@ -54,6 +54,8 @@ src/
    ├─ forecast.ts             월말 예상 잔액 계산 (돈 계산은 전부 여기)
    ├─ suggestions.ts          예산 조정 제안
    ├─ insights.ts             소비 패턴 분석 (카테고리·요일·자주 가는 곳·일정 종류별)
+   ├─ home-summary.ts         홈 요약 (이번 주, 연속 기록, 다가오는 지출, 카테고리별 전망)
+   ├─ theme.ts                화면 테마(시스템, 다크, 라이트) 저장과 적용
    ├─ history.ts              AI에 넘길 과거 소비 요약
    ├─ mock-data.ts            샘플 데이터 (오늘 기준으로 생성)
    ├─ api.ts                  브라우저 → /api/predict 호출
@@ -81,16 +83,16 @@ src/
 | | 파트 A: 캘린더·예산 | 파트 B: 일정·AI |
 | --- | --- | --- |
 | 화면 | `/` (`components/home/`), `/insights`, `/simulate` | `/events/new` (`components/events/`), `/settings` |
-| 로직 | `forecast.ts`, `suggestions.ts`, `insights.ts`, `mock-data.ts` | `predict/*`, `app/api/predict`, `history.ts`, `api.ts` |
+| 로직 | `forecast.ts`, `suggestions.ts`, `insights.ts`, `home-summary.ts`, `mock-data.ts` | `predict/*`, `app/api/predict`, `history.ts`, `api.ts` |
 
 - `lib/types.ts`는 양쪽이 다 쓰는 약속이에요. 필드를 바꿀 땐 서로 말하고 같이 맞춰 주세요.
-- `components/ui/`와 `globals.css`(색상)도 함께 쓰는 곳이에요.
+- `components/ui/`, `globals.css`(색상), `lib/theme.ts`(화면 테마)도 함께 쓰는 곳이에요.
 
 ## 개발 규칙
 
 - 브랜치, 커밋 메시지, PR, 라벨 규칙은 [CONTRIBUTING.md](CONTRIBUTING.md)에 있어요.
 - 날짜는 `'YYYY-MM-DD'`, 월은 `'YYYY-MM'` 문자열로 다뤄요 (`lib/date.ts`).
-- 색은 hex 대신 토큰 클래스를 써요: `bg-surface`, `bg-surface-2`, `text-ink`, `text-ink-2`, `text-muted`, `bg-primary` 등 (`globals.css`). 다크 모드는 토큰 값만 바뀌어요.
+- 색은 hex 대신 토큰 클래스를 써요: `bg-surface`, `bg-surface-2`, `text-ink`, `text-ink-2`, `text-muted`, `bg-primary` 등 (`globals.css`). 다크가 기본이고, 설정에서 테마를 바꾸면 토큰 값만 바뀌어요 (`lib/theme.ts`).
 - 예산 상태(여유·빠듯·초과)는 색만으로 보여주지 않고 `StatusBadge`(아이콘 + 글자)를 써요.
 - Next.js 16은 예전 버전과 다른 점이 많아요. 헷갈리면 `node_modules/next/dist/docs/`를 먼저 확인해요 (`AGENTS.md` 참고).
 
@@ -105,4 +107,4 @@ src/
 
 ## 기술 스택
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Claude API (`@anthropic-ai/sdk`) · lucide-react 아이콘 · Pretendard 폰트
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Claude API (`@anthropic-ai/sdk`) · Tabler 아이콘 (`@tabler/icons-react`) · Wanted Sans 폰트

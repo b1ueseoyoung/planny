@@ -2,44 +2,48 @@
 
 /*
   색상 토큰. 화면에서는 hex 대신 bg-surface, text-ink-2 같은 이름으로만 쓴다.
-  다크 모드는 아래 media 블록에서 값만 바뀐다.
+  다크가 기본이고, 설정에서 라이트(또는 시스템)를 고르면 <html data-theme="light">가 된다 (src/lib/theme.ts).
 */
 :root {
-  color-scheme: light;
-  --page: #f4f4f1; /* 앱 바탕 */
-  --surface: #fcfcfb; /* 카드 */
-  --surface-2: #efeee9; /* 칩·트랙 같은 옅은 면 */
-  --ink: #0b0b0b; /* 본문 글자 */
-  --ink-2: #52514e; /* 보조 글자 */
-  --muted: #898781; /* 흐린 글자 */
-  --line: rgba(11, 11, 11, 0.1);
-  --primary: #2a78d6; /* 강조 · 차트 1번 (쓴 돈) */
-  --primary-soft: #cde2fb;
-  --series-2: #eb6834; /* 차트 2번 (예정된 일정) */
-  --series-3: #1baf7a; /* 차트 3번 (남은 생활비) */
-  --good: #0ca30c; /* 상태: 여유 */
+  color-scheme: dark;
+  --page: #0b0b0c; /* 앱 바탕 */
+  --surface: #171718; /* 카드 */
+  --surface-2: #242426; /* 칩·트랙 같은 옅은 면 */
+  --ink: #f2f1ee; /* 본문 글자 */
+  --ink-2: #c4c3bb; /* 보조 글자 */
+  --muted: #8b8a85; /* 흐린 글자 */
+  --line: rgba(255, 255, 255, 0.08);
+  --primary: #3d8bf0; /* 강조 · 차트 1번 (쓴 돈) */
+  --primary-soft: #1d3a5f;
+  --series-2: #ff7a45; /* 차트 2번 (예정된 일정) */
+  --series-3: #2bc48a; /* 차트 3번 (남은 생활비) */
+  --ai: #a48bff; /* AI가 만든 내용 표시 */
+  --flame: #ff9a3d; /* 연속 기록 */
+  --on-accent: #1a1410; /* 밝은 색 카드(flame) 위 글자 */
+  --good: #2fbf4a; /* 상태: 여유 */
   --warning: #fab219; /* 상태: 빠듯 */
-  --critical: #d03b3b; /* 상태: 초과 */
+  --critical: #ef5350; /* 상태: 초과 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #262624;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --muted: #898781;
-    --line: rgba(255, 255, 255, 0.1);
-    --primary: #3987e5;
-    --primary-soft: #1d3a5f;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --good: #0ca30c;
-    --warning: #fab219;
-    --critical: #d03b3b;
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page: #f4f4f1;
+  --surface: #fcfcfb;
+  --surface-2: #efeee9;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --line: rgba(11, 11, 11, 0.1);
+  --primary: #2a78d6;
+  --primary-soft: #cde2fb;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --ai: #6f52ed;
+  --flame: #f07a1d;
+  --on-accent: #1a1410;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
 }
 
 @theme inline {
@@ -54,14 +58,25 @@
   --color-primary-soft: var(--primary-soft);
   --color-series-2: var(--series-2);
   --color-series-3: var(--series-3);
+  --color-ai: var(--ai);
+  --color-flame: var(--flame);
+  --color-on-accent: var(--on-accent);
   --color-good: var(--good);
   --color-warning: var(--warning);
   --color-critical: var(--critical);
-  --font-sans: var(--font-pretendard), system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --font-sans: var(--font-wanted-sans), system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
 }
 
 body {
   background: var(--page);
   color: var(--ink);
   word-break: keep-all;
+}
+
+/* 가로로 넘기는 카드 줄: 스크롤바 숨김 */
+.scroll-row {
+  scrollbar-width: none;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
 }

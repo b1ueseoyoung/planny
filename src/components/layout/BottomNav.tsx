@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, ChartColumn, Settings, SlidersHorizontal } from "lucide-react";
+import { IconAdjustmentsHorizontal, IconCalendar, IconChartBar, IconSettings } from "@tabler/icons-react";
 
 const TABS = [
-  { href: "/", label: "캘린더", icon: CalendarDays },
-  { href: "/insights", label: "분석", icon: ChartColumn },
-  { href: "/simulate", label: "조정", icon: SlidersHorizontal },
-  { href: "/settings", label: "설정", icon: Settings },
+  { href: "/", label: "캘린더", icon: IconCalendar },
+  { href: "/insights", label: "분석", icon: IconChartBar },
+  { href: "/simulate", label: "조정", icon: IconAdjustmentsHorizontal },
+  { href: "/settings", label: "설정", icon: IconSettings },
 ] as const;
 
 export function BottomNav() {
@@ -31,7 +31,7 @@ export function BottomNav() {
                   active ? "text-primary" : "text-muted"
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2.4 : 2} aria-hidden />
+                <Icon size={22} stroke={active ? 2.4 : 2} aria-hidden />
                 {label}
               </Link>
             </li>
