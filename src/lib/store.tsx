@@ -83,6 +83,7 @@ function ClientAppDataProvider({ children }: { children: ReactNode }) {
       endDate: prediction.endDate,
       eventType: prediction.eventType,
       location: prediction.location,
+      people: prediction.people ?? [],
       prediction,
       source,
     };

@@ -4,6 +4,7 @@ import type { AppData, Category, EventType, ISODate, Transaction } from "./types
 import { CATEGORY_LABEL } from "./categories";
 import { addDays, dayOfWeek } from "./date";
 import { formatCompact } from "./format";
+import { josa } from "./korean";
 
 export interface CategoryStat {
   category: Category;
@@ -52,13 +53,6 @@ function sumByCategory(list: Transaction[]): Partial<Record<Category, number>> {
   const result: Partial<Record<Category, number>> = {};
   for (const t of list) result[t.category] = (result[t.category] ?? 0) + t.amount;
   return result;
-}
-
-/** 받침이 있으면 withBatchim, 없으면 without (예: 배달이 / 식사가) */
-function josa(word: string, withBatchim: string, without: string): string {
-  const code = word.charCodeAt(word.length - 1) - 0xac00;
-  const hasBatchim = code >= 0 && code <= 11171 && code % 28 !== 0;
-  return word + (hasBatchim ? withBatchim : without);
 }
 
 export function buildInsights(data: AppData, today: ISODate, days = 30): InsightReport {
