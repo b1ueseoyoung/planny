@@ -88,6 +88,7 @@ src/
 
 ## 개발 규칙
 
+- 브랜치, 커밋 메시지, PR, 라벨 규칙은 [CONTRIBUTING.md](CONTRIBUTING.md)에 있어요.
 - 날짜는 `'YYYY-MM-DD'`, 월은 `'YYYY-MM'` 문자열로 다뤄요 (`lib/date.ts`).
 - 색은 hex 대신 토큰 클래스를 써요: `bg-surface`, `bg-surface-2`, `text-ink`, `text-ink-2`, `text-muted`, `bg-primary` 등 (`globals.css`). 다크 모드는 토큰 값만 바뀌어요.
 - 예산 상태(여유·빠듯·초과)는 색만으로 보여주지 않고 `StatusBadge`(아이콘 + 글자)를 써요.
