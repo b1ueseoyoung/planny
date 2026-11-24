@@ -39,6 +39,12 @@
 5. `src/lib/types.ts`(둘이 같이 쓰는 약속)를 바꾸는 PR은 본문에 꼭 적고, 상대방이 확인한 뒤에 합쳐요.
 6. 상대방이 한 번 보고 Approve 하면 **Squash and merge**로 합쳐요. 그러면 `main` 기록이 PR 하나에 커밋 하나로 깔끔하게 남아요.
 
+## AI 코드 리뷰 (Claude)
+
+- PR을 열거나 커밋을 올리면 GitHub Actions에서 Claude가 **자동으로** 리뷰를 달아요 (`.github/workflows/claude-review.yml`). 문제가 있으면 줄마다 코멘트를, 없으면 요약 코멘트를 하나 남겨요.
+- 초안(draft) PR, 아주 작은 PR, 이미 Claude 리뷰가 달린 PR은 건너뛰어요. 리뷰는 몇 분 걸리니 **리뷰가 달린 걸 보고 합쳐요.**
+- 리뷰 언어와 규칙은 `CLAUDE.md`를 따라요. 저장소 주인의 Claude 구독으로 돌아가요.
+
 ## AI 코드 리뷰 (CodeRabbit)
 
 - PR을 올리면 PR에 `@coderabbitai review` 댓글을 달아서 리뷰를 요청해요. CodeRabbit이 남긴 댓글의 "Trigger review"를 체크해도 돼요. 무료로 쓰는 공개 저장소는 스타가 10개 이상이어야 자동으로 리뷰해서, 그 전까지는 직접 요청해야 해요.
