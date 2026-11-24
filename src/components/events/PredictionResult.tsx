@@ -1,4 +1,4 @@
-import { IconMapPin, IconSparkles } from "@tabler/icons-react";
+import { IconMapPin, IconSparkles, IconUsers } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
 import { formatRangeKo } from "@/lib/date";
 import { formatWon } from "@/lib/format";
@@ -20,6 +20,12 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
           <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
             <IconMapPin size={12} aria-hidden />
             {p.location}
+          </span>
+        )}
+        {p.people && p.people.length > 0 && (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
+            <IconUsers size={12} aria-hidden />
+            {p.people.join(", ")}
           </span>
         )}
         <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-ai/15 px-2 py-0.5 font-semibold text-ai">

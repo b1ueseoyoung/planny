@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit(AI 코드 리뷰) 설정: 한국어로, 너무 깐깐하지 않게 리뷰해요.
+# CodeRabbit은 PR 브랜치에 있는 이 파일을 읽어요.
+language: ko-KR
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    # main이 아닌 브랜치를 기준으로 한 PR(다른 PR 위에 쌓은 PR)도 자동으로 리뷰
+    base_branches:
+      - ".*"
+  path_instructions:
+    - path: "src/lib/types.ts"
+      instructions: |
+        두 사람이 같이 쓰는 공용 타입(계약)이에요. 필드를 바꾸거나 지우면 이 타입을 쓰는 화면과 로직이 깨지지 않는지 꼭 짚어 주세요.
+    - path: "src/lib/predict/**"
+      instructions: |
+        AI 예측 코드예요. 돈 계산(합계, 잔액)은 AI가 아니라 코드가 해야 해요. API 키가 브라우저 코드로 새지 않는지, AI 응답을 검증하고 정리하는지, AI가 실패하면 규칙 기반 예측으로 넘어가는지 봐 주세요.
+    - path: "src/components/**"
+      instructions: |
+        색은 hex 대신 globals.css의 토큰 클래스(bg-surface, text-ink-2 등)를 쓰고, 예산 상태는 색만이 아니라 아이콘과 글자로 함께 보여줘야 해요.
