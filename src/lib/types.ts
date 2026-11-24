@@ -59,6 +59,8 @@ export interface EventPrediction {
   endDate: ISODate;
   eventType: EventType;
   location: string | null;
+  /** 함께하는 사람 이름 (본인 제외). 예전에 저장된 예측엔 없을 수 있음 */
+  people?: string[];
   items: PredictedItem[];
   /** "지난 성수동 모임 3번 평균 47,000원"처럼 예측 근거 */
   reasons: string[];
@@ -75,6 +77,8 @@ export interface CalendarEvent {
   endDate: ISODate;
   eventType: EventType;
   location: string | null;
+  /** 함께한 사람 이름 (본인 제외). 챗봇의 "○○를 언제 만났지?" 같은 질문에 쓰임. 예전 데이터엔 없을 수 있음 */
+  people?: string[];
   /** 다가오는 일정의 예상 비용. 지난 일정은 연결된 Transaction으로 실제 비용을 계산 */
   prediction: EventPrediction | null;
   source: PredictionSource | null;

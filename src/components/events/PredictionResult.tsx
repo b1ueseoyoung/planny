@@ -1,4 +1,4 @@
-import { MapPin, Sparkles } from "lucide-react";
+import { MapPin, Sparkles, Users } from "lucide-react";
 import type { PredictResponse } from "@/lib/types";
 import { formatRangeKo } from "@/lib/date";
 import { formatWon } from "@/lib/format";
@@ -19,6 +19,12 @@ export function PredictionResult({ response }: { response: PredictResponse }) {
           <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
             <MapPin size={12} aria-hidden />
             {p.location}
+          </span>
+        )}
+        {p.people && p.people.length > 0 && (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-surface-2 px-2 py-0.5 text-ink-2">
+            <Users size={12} aria-hidden />
+            {p.people.join(", ")}
           </span>
         )}
         <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 font-semibold text-ink">
