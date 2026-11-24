@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Settings, SlidersHorizontal } from "lucide-react";
+import { CalendarDays, ChartColumn, Settings, SlidersHorizontal } from "lucide-react";
 
 const TABS = [
   { href: "/", label: "캘린더", icon: CalendarDays },
+  { href: "/insights", label: "분석", icon: ChartColumn },
   { href: "/simulate", label: "조정", icon: SlidersHorizontal },
   { href: "/settings", label: "설정", icon: Settings },
 ] as const;
@@ -18,7 +19,7 @@ export function BottomNav() {
       aria-label="주요 메뉴"
       className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-[440px] border-t border-line bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur"
     >
-      <ul className="grid grid-cols-3">
+      <ul className="grid grid-cols-4">
         {TABS.map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (

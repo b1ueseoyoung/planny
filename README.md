@@ -28,6 +28,7 @@ cp .env.example .env.local
 | 경로 | 화면 | 컴포넌트 |
 | --- | --- | --- |
 | `/` | 홈: 월말 예상 잔액, 달력, 고른 날의 일정·지출, 다가오는 일정 | `components/home/` |
+| `/insights` | 분석: 최근 30일 카테고리별 지출, 요일별 패턴, 자주 가는 곳, 일정 종류별 평균 | `components/insights/` |
 | `/events/new` | 일정 추가: 문장 입력 → 예상 지출 → 예산 영향 → 저장 | `components/events/` |
 | `/simulate` | 조정: 카테고리별로 줄여보는 시뮬레이션 | `components/simulate/` |
 | `/settings` | 설정: 월 예산, 이름, 샘플 데이터 초기화 | `components/settings/` |
@@ -39,18 +40,20 @@ src/
 ├─ app/                       라우트 (page.tsx는 얇게, 화면 내용은 components로)
 │  ├─ page.tsx                홈
 │  ├─ events/new/page.tsx     일정 추가
+│  ├─ insights/page.tsx       소비 분석
 │  ├─ simulate/page.tsx       조정 시뮬레이션
 │  ├─ settings/page.tsx       설정
 │  └─ api/predict/route.ts    예측 API (POST)
 ├─ components/
 │  ├─ layout/                 앱 틀, 하단 탭
 │  ├─ ui/                     공용 UI (Card, Button, PageHeader, StatusBadge, CategoryIcon)
-│  └─ home/ events/ simulate/ settings/   화면별 컴포넌트
+│  └─ home/ events/ insights/ simulate/ settings/   화면별 컴포넌트
 └─ lib/
    ├─ types.ts                ★ 공용 타입 (모듈 사이 약속)
    ├─ store.tsx               앱 데이터 상태 + localStorage 저장
    ├─ forecast.ts             월말 예상 잔액 계산 (돈 계산은 전부 여기)
    ├─ suggestions.ts          예산 조정 제안
+   ├─ insights.ts             소비 패턴 분석 (카테고리·요일·자주 가는 곳·일정 종류별)
    ├─ history.ts              AI에 넘길 과거 소비 요약
    ├─ mock-data.ts            샘플 데이터 (오늘 기준으로 생성)
    ├─ api.ts                  브라우저 → /api/predict 호출
@@ -77,8 +80,8 @@ src/
 
 | | 파트 A: 캘린더·예산 | 파트 B: 일정·AI |
 | --- | --- | --- |
-| 화면 | `/` (`components/home/`), `/simulate` | `/events/new` (`components/events/`), `/settings` |
-| 로직 | `forecast.ts`, `suggestions.ts`, `mock-data.ts` | `predict/*`, `app/api/predict`, `history.ts`, `api.ts` |
+| 화면 | `/` (`components/home/`), `/insights`, `/simulate` | `/events/new` (`components/events/`), `/settings` |
+| 로직 | `forecast.ts`, `suggestions.ts`, `insights.ts`, `mock-data.ts` | `predict/*`, `app/api/predict`, `history.ts`, `api.ts` |
 
 - `lib/types.ts`는 양쪽이 다 쓰는 약속이에요. 필드를 바꿀 땐 서로 말하고 같이 맞춰 주세요.
 - `components/ui/`와 `globals.css`(색상)도 함께 쓰는 곳이에요.
