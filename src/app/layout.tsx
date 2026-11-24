@@ -11,8 +11,10 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "미래 소비 캘린더",
-  description: "일정을 넣으면 AI가 예상 지출과 이번 달 예산에 미치는 영향을 알려주는 캘린더",
+  // 페이지마다 title: "설정" 처럼만 쓰면 "설정 | Planny"가 된다
+  title: { default: "Planny", template: "%s | Planny" },
+  applicationName: "Planny",
+  description: "일정을 넣으면 AI가 예상 지출과 이번 달 예산에 미치는 영향을 알려주는 미래 소비 캘린더",
 };
 
 export const viewport: Viewport = {

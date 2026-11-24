@@ -5,7 +5,7 @@ import { ClientOnly } from "@/components/layout/ClientOnly";
 import { SimulateView } from "@/components/simulate/SimulateView";
 
 export const metadata: Metadata = {
-  title: "소비 조정 | 미래 소비 캘린더",
+  title: "소비 조정",
 };
 
 /** 조정 탭: 카테고리별로 줄여 보면 월말 잔액이 어떻게 바뀌는지 미리 보는 화면 */
