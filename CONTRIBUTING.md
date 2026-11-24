@@ -39,6 +39,12 @@
 5. `src/lib/types.ts`(둘이 같이 쓰는 약속)를 바꾸는 PR은 본문에 꼭 적고, 상대방이 확인한 뒤에 합쳐요.
 6. 상대방이 한 번 보고 Approve 하면 **Squash and merge**로 합쳐요. 그러면 `main` 기록이 PR 하나에 커밋 하나로 깔끔하게 남아요.
 
+## AI 코드 리뷰 (CodeRabbit)
+
+- PR을 올리면 PR에 `@coderabbitai review` 댓글을 달아서 리뷰를 요청해요. CodeRabbit이 남긴 댓글의 "Trigger review"를 체크해도 돼요. 무료로 쓰는 공개 저장소는 스타가 10개 이상이어야 자동으로 리뷰해서, 그 전까지는 직접 요청해야 해요.
+- 리뷰는 한국어로 달려요. 설정은 `.coderabbit.yaml`에 있어요. 리뷰 내용이 궁금하면 댓글로 `@coderabbitai`를 불러서 물어볼 수도 있어요.
+- CodeRabbit 리뷰는 참고용이에요. 합치기 전 Approve는 서로 한 번씩 해 줘요.
+
 ## 라벨
 
 | 라벨 | 뜻 |
