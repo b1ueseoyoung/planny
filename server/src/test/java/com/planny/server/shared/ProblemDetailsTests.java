@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -78,6 +79,13 @@ class ProblemDetailsTests {
     }
 
     @Test
+    void databaseConstraintViolationIsConflict() {
+        assertThat(mvc.get().uri("/api/v1/samples/conflict").with(jwt()))
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyJson().extractingPath("$.code").isEqualTo("CONFLICT");
+    }
+
+    @Test
     void frameworkErrorsAlsoHaveCode() {
         assertThat(mvc.delete().uri("/api/v1/samples/missing").with(jwt()))
                 .hasStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -116,6 +124,11 @@ class ProblemDetailsTests {
 
         @PostMapping("/api/{version}/samples")
         void create(@Valid @RequestBody Sample sample) {
+        }
+
+        @GetMapping("/api/{version}/samples/conflict")
+        void conflict() {
+            throw new DataIntegrityViolationException("duplicate key value violates unique constraint");
         }
 
         @GetMapping("/api/{version}/samples/boom")

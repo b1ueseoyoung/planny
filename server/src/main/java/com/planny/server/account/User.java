@@ -12,6 +12,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "users")
 class User extends BaseEntity {
 
+    static final String DEFAULT_USER_NAME = "나";
+
+    /** 프론트 목업 데이터와 같은 기본 예산 */
+    static final long DEFAULT_BUDGET = 1_200_000;
+
     /** 소문자로 바꿔 저장한다 */
     private String email;
 
@@ -56,5 +61,18 @@ class User extends BaseEntity {
 
     long getBudget() {
         return budget;
+    }
+
+    void changeUserName(@Nullable String userName) {
+        this.userName = userNameOrDefault(userName);
+    }
+
+    void changeBudget(long budget) {
+        this.budget = budget;
+    }
+
+    /** 프론트 설정 화면과 같이 앞뒤 공백을 지우고, 비어 있으면 "나"로 한다. */
+    static String userNameOrDefault(@Nullable String userName) {
+        return (userName == null || userName.isBlank()) ? DEFAULT_USER_NAME : userName.strip();
     }
 }

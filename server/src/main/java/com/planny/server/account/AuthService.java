@@ -3,7 +3,6 @@ package com.planny.server.account;
 import com.planny.server.shared.ApiException;
 import java.util.Locale;
 import java.util.Optional;
-import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +14,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 class AuthService {
-
-    static final String DEFAULT_USER_NAME = "나";
-
-    /** 프론트 목업 데이터와 같은 기본 예산 */
-    static final long DEFAULT_BUDGET = 1_200_000;
 
     private final UserRepository users;
 
@@ -46,7 +40,8 @@ class AuthService {
         if (users.existsByEmail(email)) {
             throw emailTaken();
         }
-        User user = new User(email, encode(request.password()), userNameOrDefault(request.userName()), DEFAULT_BUDGET);
+        User user = new User(email, encode(request.password()), User.userNameOrDefault(request.userName()),
+                User.DEFAULT_BUDGET);
         try {
             users.save(user);
         }
@@ -83,10 +78,6 @@ class AuthService {
 
     static String normalizeEmail(String email) {
         return email.strip().toLowerCase(Locale.ROOT);
-    }
-
-    private static String userNameOrDefault(@Nullable String userName) {
-        return (userName == null || userName.isBlank()) ? DEFAULT_USER_NAME : userName.strip();
     }
 
     private String encode(String rawPassword) {

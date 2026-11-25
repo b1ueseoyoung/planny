@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -99,6 +100,20 @@ class ProblemDetailsAdvice extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.FORBIDDEN;
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, "이 요청을 할 권한이 없습니다.");
         problem.setProperty("code", "FORBIDDEN");
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    /**
+     * DB 제약에 걸린 경우. 입력값 검사를 통과했는데도 걸렸다면 동시에 다른 요청이 데이터를 바꿨거나
+     * (예: 탈퇴한 뒤 아직 만료되지 않은 토큰으로 저장) 다른 데이터와 맞지 않는 경우다.
+     */
+    @ExceptionHandler
+    @Nullable ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
+        log.warn("DB 제약 위반: {} {}", request.getDescription(false), ex.getMostSpecificCause().getMessage());
+        HttpStatus status = HttpStatus.CONFLICT;
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status,
+                "다른 데이터와 맞지 않아 저장하지 못했습니다. 새로고침한 뒤 다시 시도해 주세요.");
+        problem.setProperty("code", "CONFLICT");
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
