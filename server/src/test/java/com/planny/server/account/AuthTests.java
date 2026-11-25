@@ -112,6 +112,23 @@ class AuthTests {
     }
 
     @Test
+    void repeatedLoginFailuresAreTemporarilyBlocked() {
+        var user = TestAccounts.signUp(mvc);
+        String wrong = """
+                {"email": "%s", "password": "wrong password"}""".formatted(user.email());
+        for (int i = 0; i < 5; i++) {
+            assertThat(post("/api/v1/auth/login", wrong)).hasStatus(HttpStatus.UNAUTHORIZED);
+        }
+
+        // 막힌 동안에는 맞는 비밀번호도 받지 않는다
+        var blocked = post("/api/v1/auth/login", """
+                {"email": "%s", "password": "%s"}""".formatted(user.email(), TestAccounts.PASSWORD));
+        assertThat(blocked).hasStatus(HttpStatus.TOO_MANY_REQUESTS)
+                .bodyJson().extractingPath("$.code").isEqualTo("TOO_MANY_LOGIN_ATTEMPTS");
+        assertThat(blocked.getResponse().getHeader(HttpHeaders.RETRY_AFTER)).matches("\\d+");
+    }
+
+    @Test
     void apiNeedsValidAccessToken() {
         var user = TestAccounts.signUp(mvc);
 

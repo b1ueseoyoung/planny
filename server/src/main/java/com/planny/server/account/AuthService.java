@@ -27,13 +27,17 @@ class AuthService {
 
     private final TokenService tokens;
 
+    private final LoginAttemptLimiter loginAttempts;
+
     /** 없는 이메일로 로그인해도 비밀번호를 확인하는 시간이 같도록 쓰는 해시 */
     private final String dummyPasswordHash;
 
-    AuthService(UserRepository users, PasswordEncoder passwordEncoder, TokenService tokens) {
+    AuthService(UserRepository users, PasswordEncoder passwordEncoder, TokenService tokens,
+            LoginAttemptLimiter loginAttempts) {
         this.users = users;
         this.passwordEncoder = passwordEncoder;
         this.tokens = tokens;
+        this.loginAttempts = loginAttempts;
         this.dummyPasswordHash = encode("planny-dummy-password");
     }
 
@@ -54,13 +58,17 @@ class AuthService {
     }
 
     TokenResponse login(LoginRequest request) {
-        Optional<User> user = users.findByEmail(normalizeEmail(request.email()));
+        String email = normalizeEmail(request.email());
+        loginAttempts.checkAllowed(email);
+        Optional<User> user = users.findByEmail(email);
         String passwordHash = user.map(User::getPasswordHash).orElse(dummyPasswordHash);
         boolean passwordMatches = passwordEncoder.matches(request.password(), passwordHash);
         if (user.isEmpty() || !passwordMatches) {
+            loginAttempts.recordFailure(email);
             // 이메일이 없는지 비밀번호가 틀렸는지 구분해서 알려 주지 않는다
             throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "이메일이나 비밀번호가 맞지 않습니다.");
         }
+        loginAttempts.recordSuccess(email);
         return tokens.startSession(user.get().getId());
     }
 
