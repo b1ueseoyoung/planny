@@ -4,6 +4,7 @@ import com.planny.server.schedule.EventService;
 import com.planny.server.shared.ApiException;
 import com.planny.server.shared.DateRange;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,23 @@ public class TransactionService {
     @Transactional
     public void delete(UUID userId, UUID transactionId) {
         transactions.delete(find(userId, transactionId));
+    }
+
+    /** 이 사용자의 거래를 모두 지우고 새로 만든다. 요청은 @Valid로 검증한 것이어야 한다. */
+    @Transactional
+    public List<TransactionResponse> replaceAll(UUID userId, List<TransactionRequest> requests) {
+        requests.stream()
+                .map(TransactionRequest::eventId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .filter(eventId -> !events.exists(userId, eventId))
+                .findAny()
+                .ifPresent(eventId -> {
+                    throw ApiException.invalidField("eventId", "연결할 일정을 찾을 수 없습니다: " + eventId);
+                });
+        transactions.deleteAllByUserId(userId);
+        List<Transaction> created = requests.stream().map(request -> new Transaction(userId, request)).toList();
+        return transactions.saveAll(created).stream().map(TransactionResponse::of).toList();
     }
 
     private Transaction find(UUID userId, UUID transactionId) {

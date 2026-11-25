@@ -1,6 +1,8 @@
 package com.planny.server.schedule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.planny.server.shared.DatePeriod;
+import com.planny.server.shared.EndDateNotBeforeStartDate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +17,7 @@ import org.jspecify.annotations.Nullable;
  * @param people 함께하는 사람 이름 (본인 제외). 예전에 만든 예측에는 없을 수 있다
  * @param reasons "지난 성수동 모임 3번 평균 47,000원"처럼 예측 근거
  */
+@EndDateNotBeforeStartDate
 public record EventPrediction(
         @NotBlank @Size(max = 200) String title,
         @NotNull LocalDate startDate,
@@ -24,5 +27,5 @@ public record EventPrediction(
         @JsonInclude(JsonInclude.Include.NON_NULL) @Nullable @Size(max = 30) List<@NotBlank @Size(max = 30) String> people,
         @NotNull @Size(max = 50) List<@NotNull @Valid PredictedItem> items,
         @NotNull @Size(max = 20) List<@NotNull @Size(max = 500) String> reasons,
-        @NotNull @Size(max = 20) List<@NotNull @Valid SavingTip> savingTips) {
+        @NotNull @Size(max = 20) List<@NotNull @Valid SavingTip> savingTips) implements DatePeriod {
 }

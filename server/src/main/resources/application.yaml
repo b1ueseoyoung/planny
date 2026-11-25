@@ -12,8 +12,18 @@ spring:
     format:
       # ?from=2026-12-01 처럼 쿼리 파라미터의 날짜도 types.ts와 같은 YYYY-MM-DD로 받는다
       date: iso
+  datasource:
+    hikari:
+      data-source-properties:
+        # 여러 행 INSERT를 한 문장으로 묶어 보낸다 (데이터 전체 바꾸기가 빨라짐)
+        reWriteBatchedInserts: true
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
     hibernate:
       # 스키마는 Flyway 마이그레이션만 바꾸고, Hibernate는 엔티티와 맞는지 확인만 한다
       ddl-auto: validate

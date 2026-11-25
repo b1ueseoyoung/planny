@@ -28,15 +28,14 @@ public class EventService {
         return EventResponse.of(find(userId, eventId));
     }
 
+    /** 요청은 @Valid로 검증한 것이어야 한다 */
     @Transactional
     public EventResponse create(UUID userId, EventRequest request) {
-        validate(request);
         return EventResponse.of(events.save(new CalendarEvent(userId, request)));
     }
 
     @Transactional
     public EventResponse update(UUID userId, UUID eventId, EventRequest request) {
-        validate(request);
         CalendarEvent event = find(userId, eventId);
         event.apply(request);
         return EventResponse.of(event);
@@ -46,6 +45,17 @@ public class EventService {
     @Transactional
     public void delete(UUID userId, UUID eventId) {
         events.delete(find(userId, eventId));
+    }
+
+    /**
+     * 이 사용자의 일정을 모두 지우고 새로 만든다. 돌려주는 목록은 요청과 같은 순서라서,
+     * 호출한 쪽이 예전 id와 새 id를 짝지을 수 있다. 요청은 @Valid로 검증한 것이어야 한다.
+     */
+    @Transactional
+    public List<EventResponse> replaceAll(UUID userId, List<EventRequest> requests) {
+        events.deleteAllByUserId(userId);
+        List<CalendarEvent> created = requests.stream().map(request -> new CalendarEvent(userId, request)).toList();
+        return events.saveAll(created).stream().map(EventResponse::of).toList();
     }
 
     /** 이 사용자의 일정인지. 거래를 일정에 연결할 때 쓴다 */
@@ -58,11 +68,5 @@ public class EventService {
         // 다른 사람의 일정도 "없음"으로 답해서 존재 여부가 드러나지 않게 한다
         return events.findByIdAndUserId(eventId, userId)
                 .orElseThrow(() -> ApiException.notFound("일정을 찾을 수 없습니다."));
-    }
-
-    private static void validate(EventRequest request) {
-        if (request.endDate().isBefore(request.startDate())) {
-            throw ApiException.invalidField("endDate", "끝 날짜는 시작 날짜와 같거나 뒤여야 합니다.");
-        }
     }
 }

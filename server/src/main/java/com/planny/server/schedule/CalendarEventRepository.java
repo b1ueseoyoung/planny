@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 interface CalendarEventRepository extends JpaRepository<CalendarEvent, UUID> {
@@ -19,4 +20,8 @@ interface CalendarEventRepository extends JpaRepository<CalendarEvent, UUID> {
             where e.userId = :userId and e.startDate <= :to and e.endDate >= :from
             order by e.startDate, e.id""")
     List<CalendarEvent> findOverlapping(UUID userId, LocalDate from, LocalDate to);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from CalendarEvent e where e.userId = :userId")
+    int deleteAllByUserId(UUID userId);
 }

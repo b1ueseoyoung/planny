@@ -11,6 +11,10 @@ public record DateRange(LocalDate from, LocalDate to) {
 
     private static final LocalDate LATEST = LocalDate.of(9999, 12, 31);
 
+    public static DateRange all() {
+        return new DateRange(EARLIEST, LATEST);
+    }
+
     public static DateRange of(@Nullable LocalDate from, @Nullable LocalDate to) {
         if (from != null && to != null && to.isBefore(from)) {
             throw ApiException.invalidField("to", "끝 날짜는 시작 날짜와 같거나 뒤여야 합니다.");
