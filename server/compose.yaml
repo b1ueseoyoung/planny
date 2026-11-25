@@ -1,0 +1,10 @@
+# ./gradlew bootRun 을 실행하면 Spring Boot가 이 파일의 컨테이너를 띄우고 접속 정보를 알아서 연결한다.
+services:
+  postgres:
+    image: postgres:18.7
+    environment:
+      POSTGRES_DB: planny
+      POSTGRES_USER: planny
+      POSTGRES_PASSWORD: planny
+    ports:
+      - '5432'
