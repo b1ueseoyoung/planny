@@ -83,6 +83,15 @@ tasks.withType<JavaCompile>().configureEach {
     }
 }
 
+// 실행 jar 이름을 고정하고, 쓰지 않는 plain jar는 만들지 않는다 (Dockerfile이 이 이름을 쓴다)
+tasks.bootJar {
+    archiveFileName = "planny-server.jar"
+}
+
+tasks.jar {
+    enabled = false
+}
+
 tasks.register<JavaExec>("generateJwtKey") {
     group = "planny"
     description = "운영용 JWT 서명 키(JWKS)를 새로 만들어 출력합니다."
