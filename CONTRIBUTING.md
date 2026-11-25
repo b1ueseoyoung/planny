@@ -36,6 +36,8 @@
 2. **본문**은 PR 템플릿을 채워요. 무엇을 바꿨는지, 왜 바꿨는지, 어떻게 확인했는지, 화면이 바뀌면 스크린샷을 넣어요.
 3. **라벨**은 종류 라벨 하나와 파트 라벨 하나를 달아요 (아래 표).
 4. 올리기 전에 `npx tsc --noEmit`과 `npm run lint`가 통과하는지 확인해요.
+   - 서버(`server/`)를 바꿨으면 `cd server && ./gradlew build`(테스트 포함, Docker 필요)도 통과해야 해요. PR에서 서버 CI가 같은 빌드를 돌려요.
+   - 서버 DB 스키마는 `server/src/main/resources/db/migration`에 새 파일(`V2__설명.sql`)을 추가해서 바꿔요. main에 들어간 마이그레이션 파일은 고치지 않아요.
 5. `src/lib/types.ts`(둘이 같이 쓰는 약속)를 바꾸는 PR은 본문에 꼭 적고, 상대방이 확인한 뒤에 합쳐요.
 6. 상대방이 한 번 보고 Approve 하면 **Squash and merge**로 합쳐요. 그러면 `main` 기록이 PR 하나에 커밋 하나로 깔끔하게 남아요.
 
@@ -58,3 +60,4 @@
 | `feat` `fix` `design` `refactor` `docs` `chore` | PR 종류 (위 커밋 종류와 같음) |
 | `A: 캘린더·예산` | 홈, 분석, 조정 화면과 `forecast`·`suggestions`·`insights`·`mock-data` |
 | `B: 일정·AI` | 일정 추가, 설정 화면과 `predict`·`api/predict`·`history` |
+| `C: 서버` | `server/` 폴더: API 서버, DB, 배포 |
