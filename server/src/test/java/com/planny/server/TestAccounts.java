@@ -30,10 +30,10 @@ public final class TestAccounts {
                 .exchange();
         assertThat(result).hasStatus(HttpStatus.CREATED);
         String body = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
-        return new SignedUp(email, JsonPath.read(body, "$.accessToken"));
+        return new SignedUp(email, JsonPath.read(body, "$.accessToken"), JsonPath.read(body, "$.refreshToken"));
     }
 
-    public record SignedUp(String email, String accessToken) {
+    public record SignedUp(String email, String accessToken, String refreshToken) {
 
         public String bearer() {
             return "Bearer " + accessToken;

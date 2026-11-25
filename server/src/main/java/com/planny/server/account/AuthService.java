@@ -50,7 +50,7 @@ class AuthService {
             // 같은 이메일로 동시에 가입한 경우
             throw emailTaken();
         }
-        return tokens.issue(user.getId());
+        return tokens.startSession(user.getId());
     }
 
     TokenResponse login(LoginRequest request) {
@@ -61,7 +61,16 @@ class AuthService {
             // 이메일이 없는지 비밀번호가 틀렸는지 구분해서 알려 주지 않는다
             throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "이메일이나 비밀번호가 맞지 않습니다.");
         }
-        return tokens.issue(user.get().getId());
+        return tokens.startSession(user.get().getId());
+    }
+
+    TokenResponse refresh(String refreshToken) {
+        return tokens.refresh(refreshToken).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED,
+                "INVALID_REFRESH_TOKEN", "로그인이 만료됐습니다. 다시 로그인해 주세요."));
+    }
+
+    void logout(String refreshToken) {
+        tokens.logout(refreshToken);
     }
 
     static String normalizeEmail(String email) {

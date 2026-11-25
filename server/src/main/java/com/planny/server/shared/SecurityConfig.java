@@ -30,7 +30,7 @@ class SecurityConfig {
                 .requestCache(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/*/auth/signup", "/api/*/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/*/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())

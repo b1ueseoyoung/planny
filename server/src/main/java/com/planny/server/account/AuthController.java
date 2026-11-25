@@ -29,4 +29,17 @@ class AuthController {
     TokenResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
+
+    /** 액세스 토큰이 만료되면 리프레시 토큰으로 새 토큰을 받는다. 리프레시 토큰도 새로 바뀐다. */
+    @PostMapping("/refresh")
+    TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return authService.refresh(request.refreshToken());
+    }
+
+    /** 이 기기의 로그인을 끝낸다. 리프레시 토큰을 폐기하고, 이미 받은 액세스 토큰은 만료될 때까지 쓸 수 있다. */
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request.refreshToken());
+    }
 }
