@@ -4,6 +4,10 @@ spring:
   threads:
     virtual:
       enabled: true
+  web:
+    # 입력값 검증 메시지를 한국어로 ("공백일 수 없습니다")
+    locale: ko_KR
+    locale-resolver: fixed
   jpa:
     open-in-view: false
     hibernate:
