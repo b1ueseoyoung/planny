@@ -8,3 +8,13 @@ services:
       POSTGRES_PASSWORD: planny
     ports:
       - '5432'
+
+  # otel 프로필로 실행할 때만 뜬다. 트레이스(Tempo)와 메트릭(Prometheus)을 Grafana에서 본다
+  grafana-lgtm:
+    image: grafana/otel-lgtm:0.41.1
+    profiles: [observability]
+    ports:
+      # Next 개발 서버가 3000을 써서 Grafana는 3001로 연다
+      - '3001:3000'
+      - '4317'
+      - '4318'

@@ -1,0 +1,13 @@
+# 컨테이너(운영)에서 쓰는 설정. 컨테이너 이미지가 SPRING_PROFILES_ACTIVE=prod 로 켠다.
+logging:
+  structured:
+    format:
+      # 한 줄에 하나씩 JSON 로그 (Elastic Common Schema). 트레이스 id가 함께 들어간다
+      console: ecs
+
+# API 모양을 밖에 드러내지 않는다. 문서는 로컬 서버나 CI가 만든 openapi.json으로 본다
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

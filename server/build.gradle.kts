@@ -26,6 +26,8 @@ extra["springModulithVersion"] = "2.2.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
@@ -43,6 +45,9 @@ dependencies {
     implementation("org.jspecify:jspecify")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     runtimeOnly("org.postgresql:postgresql")
+    // 모듈 사이 호출을 트레이스에 모듈 이름으로 남긴다
+    runtimeOnly("org.springframework.modulith:spring-modulith-observability-core")
+    runtimeOnly("org.springframework.modulith:spring-modulith-runtime")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
