@@ -8,6 +8,10 @@ spring:
     # 입력값 검증 메시지를 한국어로 ("공백일 수 없습니다")
     locale: ko_KR
     locale-resolver: fixed
+  mvc:
+    format:
+      # ?from=2026-12-01 처럼 쿼리 파라미터의 날짜도 types.ts와 같은 YYYY-MM-DD로 받는다
+      date: iso
   jpa:
     open-in-view: false
     hibernate:
