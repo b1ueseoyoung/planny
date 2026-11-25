@@ -1,6 +1,7 @@
 package com.planny.server.account;
 
 import com.planny.server.shared.CurrentUser;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "내 정보")
 @RestController
-@RequestMapping("/api/{version}/me")
+@RequestMapping(path = "/api/{version}/me", version = "v1")
 class MeController {
 
     private final MeService meService;

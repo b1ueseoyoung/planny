@@ -1,5 +1,7 @@
 package com.planny.server.account;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+// 토큰 없이 부르는 API
+@SecurityRequirements
+@Tag(name = "인증")
 @RestController
-@RequestMapping("/api/{version}/auth")
+@RequestMapping(path = "/api/{version}/auth", version = "v1")
 class AuthController {
 
     private final AuthService authService;

@@ -1,6 +1,7 @@
 package com.planny.server.backup;
 
 import com.planny.server.shared.CurrentUser;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "데이터 전체")
 @RestController
-@RequestMapping("/api/{version}/app-data")
+@RequestMapping(path = "/api/{version}/app-data", version = "v1")
 class BackupController {
 
     private final BackupService backupService;

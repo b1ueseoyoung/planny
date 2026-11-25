@@ -27,3 +27,9 @@ spring:
     hibernate:
       # 스키마는 Flyway 마이그레이션만 바꾸고, Hibernate는 엔티티와 맞는지 확인만 한다
       ddl-auto: validate
+
+springdoc:
+  model-converters:
+    # JSpecify @Nullable 필드를 문서에 null 가능으로 표시한다 (프론트 타입 생성에 쓰임)
+    java-nullable-property-customizer:
+      enabled: true

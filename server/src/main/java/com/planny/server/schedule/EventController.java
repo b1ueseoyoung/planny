@@ -2,6 +2,7 @@ package com.planny.server.schedule;
 
 import com.planny.server.shared.CurrentUser;
 import com.planny.server.shared.DateRange;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
@@ -22,8 +23,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Tag(name = "일정")
 @RestController
-@RequestMapping("/api/{version}/events")
+@RequestMapping(path = "/api/{version}/events", version = "v1")
 class EventController {
 
     private final EventService eventService;

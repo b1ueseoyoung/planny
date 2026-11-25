@@ -32,6 +32,10 @@ dependencies {
     // Argon2 비밀번호 해시
     implementation("org.bouncycastle:bcprov-jdk18on:1.87")
     implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.1")
+    // Javadoc을 실행 중에도 읽을 수 있게 남겨서 API 문서 설명으로 쓴다
+    implementation("com.github.therapi:therapi-runtime-javadoc:0.16.0")
+    annotationProcessor("com.github.therapi:therapi-runtime-javadoc-scribe:0.16.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.flywaydb:flyway-database-postgresql")
@@ -63,6 +67,7 @@ dependencyManagement {
 
 // @NullMarked 패키지에서 null이 될 수 있는 값을 확인 없이 쓰면 컴파일 오류로 막는다 (Spring 문서 권장 설정)
 tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Ajavadoc.packages=com.planny.server")
     options.errorprone {
         disableWarningsInGeneratedCode = true
         check("NullAway", CheckSeverity.ERROR)
