@@ -1,6 +1,7 @@
 package com.planny.server.shared;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 import com.planny.server.TestcontainersConfiguration;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ class ProblemDetailsTests {
 
     @Test
     void apiExceptionBecomesProblemDetail() {
-        assertThat(mvc.get().uri("/api/v1/samples/missing"))
+        assertThat(mvc.get().uri("/api/v1/samples/missing").with(jwt()))
                 .hasStatus(HttpStatus.NOT_FOUND)
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON)
                 .bodyJson()
@@ -40,7 +41,7 @@ class ProblemDetailsTests {
 
     @Test
     void invalidBodyListsEveryWrongField() {
-        assertThat(mvc.post().uri("/api/v1/samples")
+        assertThat(mvc.post().uri("/api/v1/samples").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"title": " ", "amount": 0}"""))
@@ -57,7 +58,7 @@ class ProblemDetailsTests {
 
     @Test
     void unreadableValueReportsWhere() {
-        assertThat(mvc.post().uri("/api/v1/samples")
+        assertThat(mvc.post().uri("/api/v1/samples").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"title": "점심", "amount": "만원"}"""))
@@ -69,7 +70,7 @@ class ProblemDetailsTests {
 
     @Test
     void unexpectedErrorHidesInternals() {
-        assertThat(mvc.get().uri("/api/v1/samples/boom"))
+        assertThat(mvc.get().uri("/api/v1/samples/boom").with(jwt()))
                 .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .bodyText()
                 .contains("INTERNAL_ERROR")
@@ -78,11 +79,11 @@ class ProblemDetailsTests {
 
     @Test
     void frameworkErrorsAlsoHaveCode() {
-        assertThat(mvc.delete().uri("/api/v1/samples/missing"))
+        assertThat(mvc.delete().uri("/api/v1/samples/missing").with(jwt()))
                 .hasStatus(HttpStatus.METHOD_NOT_ALLOWED)
                 .bodyJson()
                 .extractingPath("$.code").isEqualTo("METHOD_NOT_ALLOWED");
-        assertThat(mvc.get().uri("/api/v1/nothing-here"))
+        assertThat(mvc.get().uri("/api/v1/nothing-here").with(jwt()))
                 .hasStatus(HttpStatus.NOT_FOUND)
                 .bodyJson()
                 .extractingPath("$.code").isEqualTo("NOT_FOUND");
@@ -90,16 +91,16 @@ class ProblemDetailsTests {
 
     @Test
     void rejectsUnsupportedApiVersion() {
-        assertThat(mvc.get().uri("/api/v2/samples/missing"))
+        assertThat(mvc.get().uri("/api/v2/samples/missing").with(jwt()))
                 .hasStatus(HttpStatus.BAD_REQUEST)
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        assertThat(mvc.get().uri("/api/latest/samples/missing"))
+        assertThat(mvc.get().uri("/api/latest/samples/missing").with(jwt()))
                 .hasStatus(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void pathsOutsideApiNeedNoVersion() {
-        assertThat(mvc.get().uri("/unversioned-sample")).hasStatusOk().bodyText().isEqualTo("ok");
+        assertThat(mvc.get().uri("/unversioned-sample").with(jwt())).hasStatusOk().bodyText().isEqualTo("ok");
     }
 
     @RestController

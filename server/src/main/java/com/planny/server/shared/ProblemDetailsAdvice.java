@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
@@ -77,6 +80,26 @@ class ProblemDetailsAdvice extends ResponseEntityExceptionHandler {
                     "형식이 맞지 않거나 허용되지 않는 값입니다")));
         }
         return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    /** 토큰이 없거나(UNAUTHORIZED) 만료, 위조된 토큰(INVALID_TOKEN). 프론트는 INVALID_TOKEN이면 토큰을 새로 받는다. */
+    @ExceptionHandler
+    @Nullable ResponseEntity<Object> handleAuthentication(AuthenticationException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        boolean invalidToken = ex instanceof InvalidBearerTokenException;
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, invalidToken
+                ? "토큰이 만료됐거나 올바르지 않습니다. 토큰을 새로 받아 주세요."
+                : "로그인이 필요합니다.");
+        problem.setProperty("code", invalidToken ? "INVALID_TOKEN" : "UNAUTHORIZED");
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler
+    @Nullable ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, "이 요청을 할 권한이 없습니다.");
+        problem.setProperty("code", "FORBIDDEN");
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     /** 예상하지 못한 오류. 내부 정보는 로그에만 남기고 응답에는 담지 않는다. */
