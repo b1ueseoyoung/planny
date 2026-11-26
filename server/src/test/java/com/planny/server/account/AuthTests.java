@@ -85,6 +85,15 @@ class AuthTests {
     }
 
     @Test
+    void loginRejectsTooLongEmail() {
+        assertThat(post("/api/v1/auth/login", """
+                {"email": "%s@example.com", "password": "wrong password"}""".formatted("a".repeat(250))))
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyJson().extractingPath("$.errors[*].field").asArray()
+                .containsExactly("email");
+    }
+
+    @Test
     void loginWithCorrectPasswordGivesToken() {
         var user = TestAccounts.signUp(mvc);
 
