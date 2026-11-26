@@ -33,7 +33,13 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # TODO(임시): 리뷰가 바로 실패하는 원인을 로그에서 보려고 켠다. 공개 저장소라 로그가 공개되니 원인을 찾으면 지운다
+          show_full_output: true
           plugin_marketplaces: "https://github.com/anthropics/claude-plugins-official.git"
           plugins: "code-review@claude-plugins-official"
           prompt: "/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
+          # code-review 플러그인이 쓰는 도구 (플러그인 commands/code-review.md의 allowed-tools와 같게)
+          # gh로 PR 내용·diff를 읽고, 문제가 없으면 gh pr comment로 요약을 남긴다
+          claude_args: >-
+            --allowedTools
+            "mcp__github_inline_comment__create_inline_comment,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh pr list:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*)"
