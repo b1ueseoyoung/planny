@@ -1,11 +1,12 @@
 // AI(Gemini·Claude)가 공통으로 쓰는 응답 형식, 프롬프트, 응답 정리 함수
-// TODO: 프롬프트에 예시 몇 개 넣기, 예상 vs 실제 지출을 모아서 프롬프트 다듬기
+// TODO: 예상 vs 실제 지출을 모아서 프롬프트와 예시(examples.ts) 다듬기
 import * as z from "zod/v4";
 import { CATEGORIES, EVENT_TYPES, type PredictRequest } from "../types";
 import { CATEGORY_LABEL } from "../categories";
 import { formatDateKo, parseISODate, toISODate } from "../date";
 import type { UnderstoodEvent } from "./types";
 import { cleanPeople } from "./people";
+import { formatPromptExamples } from "./examples";
 
 /** AI가 반드시 이 모양의 JSON으로 답하게 하는 스키마 (UnderstoodEvent와 같은 모양) */
 export const UnderstoodEventSchema = z.object({
@@ -44,7 +45,11 @@ export const SYSTEM_PROMPT = `너는 한국 사용자의 일정 문장을 읽고
 - savingTips: 현실적인 절약 방법 0~3개와 그때 아끼는 금액.
 - 예산이나 월말 잔액은 계산하지 마. 앱이 따로 계산해.
 - 과거 소비 요약이 있으면 이 사람의 평소 씀씀이에 맞춰.
-- category: meal(식사) cafe(카페·간식) delivery(배달) grocery(장보기·편의점) transport(교통) lodging(숙박) shopping(쇼핑) culture(문화·여가) gift(선물·경조사) subscription(정기결제) etc(기타)`;
+- category: meal(식사) cafe(카페·간식) delivery(배달) grocery(장보기·편의점) transport(교통) lodging(숙박) shopping(쇼핑) culture(문화·여가) gift(선물·경조사) subscription(정기결제) etc(기타)
+
+아래 예시는 형식과 판단 방법을 보여주는 거야. 금액은 그대로 베끼지 말고, 실제 일정과 과거 소비 요약에 맞춰 다시 잡아. 예시의 '오늘'은 실제 요청의 '오늘'과 다르니 날짜는 꼭 실제 요청의 '오늘' 기준으로 계산해.
+
+${formatPromptExamples()}`;
 
 /** AI에게 보내는 사용자 메시지 */
 export function buildUserMessage(req: PredictRequest): string {
