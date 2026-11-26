@@ -56,7 +56,8 @@ export function buildUserMessage(req: PredictRequest): string {
   ].join("\n");
 }
 
-function isISODate(value: string): boolean {
+/** 올바른 'YYYY-MM-DD' 날짜인지 (2월 30일 같은 없는 날은 false) */
+export function isISODate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const { y, m, d } = parseISODate(value);
   return toISODate(y, m, d) === value;

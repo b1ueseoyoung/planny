@@ -1,38 +1,34 @@
 // POST /api/predict — 일정 문장을 받아 예상 지출을 돌려준다.
-import type { PredictRequest } from "@/lib/types";
 import { predictEvent } from "@/lib/predict";
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-/** 최소한의 모양 검사 (TODO: 필요하면 zod로 꼼꼼하게) */
-function isPredictRequest(body: unknown): body is PredictRequest {
-  if (typeof body !== "object" || body === null) return false;
-  const b = body as Record<string, unknown>;
-  const history = b.history as Record<string, unknown> | undefined;
-  return (
-    typeof b.text === "string" &&
-    b.text.trim().length > 0 &&
-    b.text.length <= 300 &&
-    typeof b.defaultDate === "string" &&
-    DATE_RE.test(b.defaultDate) &&
-    typeof b.today === "string" &&
-    DATE_RE.test(b.today) &&
-    typeof history === "object" &&
-    history !== null &&
-    Array.isArray(history.pastEvents) &&
-    typeof history.dailyAverageByCategory === "object"
-  );
-}
+import { MAX_BODY_BYTES, parsePredictRequest } from "@/lib/predict/request";
 
 export async function POST(request: Request) {
+  // 너무 큰 본문은 읽기 전에 거른다 (Content-Length가 없거나 거짓이면 아래에서 한 번 더 본다)
+  const declared = Number(request.headers.get("content-length"));
+  if (declared > MAX_BODY_BYTES) {
+    return Response.json({ error: "요청 본문이 너무 커요" }, { status: 413 });
+  }
+
+  let raw: string;
+  try {
+    raw = await request.text();
+  } catch {
+    return Response.json({ error: "요청 본문을 읽지 못했어요" }, { status: 400 });
+  }
+  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+    return Response.json({ error: "요청 본문이 너무 커요" }, { status: 413 });
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     return Response.json({ error: "JSON 본문이 필요해요" }, { status: 400 });
   }
-  if (!isPredictRequest(body)) {
-    return Response.json({ error: "text, defaultDate, today, history가 필요해요" }, { status: 400 });
+
+  const parsed = parsePredictRequest(body);
+  if (!parsed.ok) {
+    return Response.json({ error: "요청 형식이 올바르지 않아요", details: parsed.errors }, { status: 400 });
   }
-  return Response.json(await predictEvent(body));
+  return Response.json(await predictEvent(parsed.data));
 }
