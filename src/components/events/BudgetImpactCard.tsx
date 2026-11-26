@@ -1,6 +1,6 @@
 "use client";
 
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconHistory } from "@tabler/icons-react";
 import type { EventPrediction } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { monthKey } from "@/lib/date";
@@ -17,6 +17,8 @@ export function BudgetImpactCard({ prediction }: { prediction: EventPrediction }
   const before = computeMonthForecast(data, month, today);
   const after = computeMonthForecast(data, month, today, { extraEvent: prediction });
   const suggestions = buildSuggestions(after).slice(0, 3);
+  // 예산 예측(computeMonthForecast)은 오늘부터의 일정만 더한다. 지난 날짜면 추가 전후가 같아서 이유를 알려준다.
+  const isPast = prediction.startDate < today;
 
   return (
     <Card>
@@ -34,6 +36,12 @@ export function BudgetImpactCard({ prediction }: { prediction: EventPrediction }
         </div>
       </div>
       <p className="mt-2 text-sm text-ink-2">{statusMessage(after.status, after.projectedBalance)}</p>
+      {isPast && (
+        <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-surface-2 px-3 py-2 text-xs text-ink-2">
+          <IconHistory size={14} className="mt-0.5 shrink-0 text-muted" aria-hidden />
+          이미 지난 날짜의 일정이라 남은 예산 예측에는 넣지 않았어요. 앞으로의 일정이면 날짜를 확인해 주세요.
+        </p>
+      )}
 
       {suggestions.length > 0 && (
         <div className="mt-4 rounded-2xl bg-surface-2 p-3">
@@ -48,7 +56,6 @@ export function BudgetImpactCard({ prediction }: { prediction: EventPrediction }
           </ul>
         </div>
       )}
-      {/* TODO: 일정이 이미 지난 날짜면 '이미 지난 일정' 안내하기 */}
     </Card>
   );
 }
