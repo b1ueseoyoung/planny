@@ -1,5 +1,5 @@
 # server/ 폴더가 바뀐 PR과 main 푸시에서 서버를 빌드하고 테스트한다 (Testcontainers로 실제 PostgreSQL을 띄운다).
-# main에서는 컨테이너 이미지를 GitHub Container Registry(ghcr.io)에 올리고 빌드 출처 증명을 남긴다.
+# 컨테이너 이미지도 PR에서 빌드해 보고, main에서는 GitHub Container Registry(ghcr.io)에 올리고 빌드 출처 증명을 남긴다.
 # 액션은 커밋 SHA로 고정하고, 버전은 Dependabot이 올린다.
 name: 서버 CI
 
@@ -62,9 +62,8 @@ jobs:
           if-no-files-found: error
 
   image:
-    name: 이미지 올리기
+    name: 이미지 빌드와 올리기
     needs: build
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -80,6 +79,7 @@ jobs:
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        if: github.event_name == 'push'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -93,11 +93,12 @@ jobs:
             type=sha
             type=raw,value=latest
 
+      # PR에서는 빌드만 해서 Dockerfile 문제를 머지 전에 잡고, 이미지는 main에서만 올린다
       - id: push
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: server
-          push: true
+          push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -105,6 +106,7 @@ jobs:
 
       # 이 이미지가 이 저장소의 이 커밋에서 이 워크플로로 만들어졌다는 서명된 기록 (SLSA 빌드 출처)
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        if: github.event_name == 'push'
         with:
           subject-name: ghcr.io/${{ github.repository_owner }}/planny-server
           subject-digest: ${{ steps.push.outputs.digest }}
