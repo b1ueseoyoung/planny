@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IconLoader2, IconSparkles } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
@@ -26,9 +26,38 @@ export function NewEventScreen() {
   const dateParam = useSearchParams().get("date");
 
   const [text, setText] = useState("");
-  const [date, setDate] = useState(dateParam && ISO_DATE.test(dateParam) ? dateParam : today);
+  // 날짜칸을 직접 바꾸기 전까지는 주소의 ?date=를 따른다.
+  // 화면이 살아 있는 채로 다른 날에서 '일정 추가'를 눌러 들어와도 그 날짜가 보이게 한다.
+  const [pickedDate, setPickedDate] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("input");
   const [result, setResult] = useState<PredictResponse | null>(null);
+  const [lastDateParam, setLastDateParam] = useState(dateParam);
+  if (dateParam !== lastDateParam) {
+    setLastDateParam(dateParam);
+    setPickedDate(null);
+    // 저장하지 않은 결과는 이전 날짜로 만든 예측이라 버리고 입력 단계로 돌아간다 (입력한 문장은 둔다)
+    if (step === "result") {
+      setStep("input");
+      setResult(null);
+    }
+  }
+  const date = pickedDate ?? (dateParam && ISO_DATE.test(dateParam) ? dateParam : today);
+  /** 저장하고 떠나는 중인지. 두 번 눌러도 한 번만 저장하고, 화면이 숨겨질 때 비우는 데 쓴다 */
+  const savedRef = useRef(false);
+
+  // Next 16(cacheComponents)은 떠난 화면을 지우지 않고 <Activity>로 숨겨서 state가 그대로 남는다.
+  // 저장하고 떠났으면 숨겨질 때 비워서, 다음에 들어오면 빈 화면에서 시작하게 한다 (저장 안 한 초안은 둔다).
+  // 참고: node_modules/next/dist/docs/01-app/02-guides/preserving-ui-state.md
+  useLayoutEffect(() => {
+    return () => {
+      if (!savedRef.current) return;
+      savedRef.current = false;
+      setText("");
+      setPickedDate(null);
+      setStep("input");
+      setResult(null);
+    };
+  }, []);
 
   async function analyze(input: string) {
     const trimmed = input.trim();
@@ -46,7 +75,9 @@ export function NewEventScreen() {
   }
 
   function save() {
-    if (!result) return;
+    // 두 번 눌러도 한 번만 저장한다
+    if (!result || savedRef.current) return;
+    savedRef.current = true;
     addEvent(result.prediction, result.source);
     router.push(`/?date=${result.prediction.startDate}`);
   }
@@ -96,7 +127,7 @@ export function NewEventScreen() {
                 <input
                   type="date"
                   value={date}
-                  onChange={(e) => e.target.value && setDate(e.target.value)}
+                  onChange={(e) => e.target.value && setPickedDate(e.target.value)}
                   className="mt-1.5 block h-12 w-full rounded-2xl bg-surface-2 px-3 text-base outline-none focus:ring-2 focus:ring-primary"
                 />
                 <span className="mt-1 block text-xs text-muted">{formatDateKo(date)}</span>
