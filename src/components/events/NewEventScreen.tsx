@@ -29,14 +29,19 @@ export function NewEventScreen() {
   // 날짜칸을 직접 바꾸기 전까지는 주소의 ?date=를 따른다.
   // 화면이 살아 있는 채로 다른 날에서 '일정 추가'를 눌러 들어와도 그 날짜가 보이게 한다.
   const [pickedDate, setPickedDate] = useState<string | null>(null);
+  const [step, setStep] = useState<Step>("input");
+  const [result, setResult] = useState<PredictResponse | null>(null);
   const [lastDateParam, setLastDateParam] = useState(dateParam);
   if (dateParam !== lastDateParam) {
     setLastDateParam(dateParam);
     setPickedDate(null);
+    // 저장하지 않은 결과는 이전 날짜로 만든 예측이라 버리고 입력 단계로 돌아간다 (입력한 문장은 둔다)
+    if (step === "result") {
+      setStep("input");
+      setResult(null);
+    }
   }
   const date = pickedDate ?? (dateParam && ISO_DATE.test(dateParam) ? dateParam : today);
-  const [step, setStep] = useState<Step>("input");
-  const [result, setResult] = useState<PredictResponse | null>(null);
   /** 저장하고 떠나는 중인지. 두 번 눌러도 한 번만 저장하고, 화면이 숨겨질 때 비우는 데 쓴다 */
   const savedRef = useRef(false);
 
