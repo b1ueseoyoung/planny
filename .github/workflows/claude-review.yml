@@ -33,8 +33,6 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # TODO(임시): 리뷰가 바로 실패하는 원인을 로그에서 보려고 켠다. 공개 저장소라 로그가 공개되니 원인을 찾으면 지운다
-          show_full_output: true
           plugin_marketplaces: "https://github.com/anthropics/claude-plugins-official.git"
           plugins: "code-review@claude-plugins-official"
           prompt: "/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
