@@ -1,0 +1,26 @@
+# 컨테이너(운영)에서 쓰는 설정. 컨테이너 이미지가 SPRING_PROFILES_ACTIVE=prod 로 켠다.
+logging:
+  structured:
+    format:
+      # 한 줄에 하나씩 JSON 로그 (Elastic Common Schema). 트레이스 id가 함께 들어간다
+      console: ecs
+
+# API 모양을 밖에 드러내지 않는다. 문서는 로컬 서버나 CI가 만든 openapi.json으로 본다
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+planny:
+  jwt:
+    # 서명 키(PLANNY_JWT_KEYS)가 없으면 시작하지 않는다.
+    # 임시 키로 뜨면 다시 시작하거나 서버가 여러 대일 때 토큰이 무효가 되기 때문이다
+    allow-ephemeral-key: false
+
+server:
+  request:
+    header:
+      forwarded:
+        # Cloud Run 같은 프록시 뒤에서 X-Forwarded-Proto를 읽어 Location 헤더 같은 주소를 https로 만든다
+        strategy: web-server

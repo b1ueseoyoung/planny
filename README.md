@@ -23,6 +23,17 @@ cp .env.example .env.local
 
 `.env.local`에 `ANTHROPIC_API_KEY`를 넣고 서버를 다시 켜면 `/api/predict`가 Claude(`claude-opus-5-5`)로 예측해요. 키가 없으면 키워드 기반 목업 예측이 대신 돌아가서, 키 없이도 화면은 다 써볼 수 있어요.
 
+## 서버
+
+`server/` 폴더에 API 서버(Spring Boot 4.2, Java 25, PostgreSQL 18)가 있어요. 가입과 로그인, 내 정보, 일정, 거래, 내 데이터 전체를 저장해요. 아직 프론트와는 연결하지 않았어요.
+
+```bash
+cd server
+./gradlew bootRun
+```
+
+Docker Desktop만 켜 두면 JDK와 DB는 알아서 준비돼요. http://localhost:8080/swagger-ui.html 에서 API를 바로 불러 볼 수 있어요. 자세한 건 [server/README.md](server/README.md)에 있어요.
+
 ## 화면
 
 | 경로 | 화면 | 컴포넌트 |
@@ -87,6 +98,7 @@ src/
 
 - `lib/types.ts`는 양쪽이 다 쓰는 약속이에요. 필드를 바꿀 땐 서로 말하고 같이 맞춰 주세요.
 - `components/ui/`, `globals.css`(색상), `lib/theme.ts`(화면 테마)도 함께 쓰는 곳이에요.
+- 서버(`server/`)는 `C: 서버` 라벨로 따로 관리해요.
 
 ## 개발 규칙
 
@@ -102,9 +114,12 @@ src/
 - 일정 상세 화면(`/events/[id]`): 예측 금액 고치기, 끝난 일정에 실제 지출 연결하기
 - 고정 지출(월세·구독) 따로 관리하기
 - AI 프롬프트 다듬기, 예상과 실제 지출 비교해서 정확도 보기
-- 여러 기기에서 쓰기 (DB, 로그인)
+- 프론트를 서버에 연결하기: 로그인 화면, `store.tsx`를 서버 API로 바꾸기, 기기 데이터 올리기
+- 서버 배포
 - 테스트
 
 ## 기술 스택
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Claude API (`@anthropic-ai/sdk`) · Tabler 아이콘 (`@tabler/icons-react`) · Wanted Sans 폰트
+
+서버: Java 25, Spring Boot 4.2, PostgreSQL 18, Spring Modulith, OpenTelemetry, Testcontainers

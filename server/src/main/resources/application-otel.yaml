@@ -1,0 +1,15 @@
+# OpenTelemetry(OTLP)로 트레이스와 메트릭을 보낸다.
+# 로그는 콘솔에 남기고(prod 프로필은 JSON), 로그에 찍힌 traceId로 트레이스와 이어 본다.
+# 로컬: ./gradlew bootRun --args='--spring.profiles.active=otel'
+#   compose.yaml의 Grafana LGTM 컨테이너가 함께 뜨고 http://localhost:3001 에서 본다
+# 운영: SPRING_PROFILES_ACTIVE에 otel을 넣고 OTEL_EXPORTER_OTLP_ENDPOINT로 수집기 주소를 준다
+spring:
+  docker:
+    compose:
+      profiles:
+        active: observability
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: true

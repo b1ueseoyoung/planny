@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: planny-server
+  threads:
+    virtual:
+      enabled: true
+  web:
+    # 입력값 검증 메시지를 한국어로 ("공백일 수 없습니다")
+    locale: ko_KR
+    locale-resolver: fixed
+  mvc:
+    format:
+      # ?from=2026-12-01 처럼 쿼리 파라미터의 날짜도 types.ts와 같은 YYYY-MM-DD로 받는다
+      date: iso
+  datasource:
+    hikari:
+      data-source-properties:
+        # 여러 행 INSERT를 한 문장으로 묶어 보낸다 (데이터 전체 바꾸기가 빨라짐)
+        reWriteBatchedInserts: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+    hibernate:
+      # 스키마는 Flyway 마이그레이션만 바꾸고, Hibernate는 엔티티와 맞는지 확인만 한다
+      ddl-auto: validate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      group:
+        # 준비 상태(readiness)에는 DB 연결도 본다. 살아 있음(liveness)에는 넣지 않아서
+        # DB가 잠깐 끊겨도 서버를 재시작하지 않고 트래픽만 잠시 받지 않는다
+        readiness:
+          include: readinessState, db
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    metrics:
+      export:
+        # 수집기가 있을 때만 켠다 (otel 프로필). 꺼 두지 않으면 수집기가 없는 로컬에서 1분마다 경고가 남는다
+        enabled: false
+
+springdoc:
+  # 로컬에서는 API 문서를 켠다. 운영(prod 프로필)에서는 끈다
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  model-converters:
+    # JSpecify @Nullable 필드를 문서에 null 가능으로 표시한다 (프론트 타입 생성에 쓰임)
+    java-nullable-property-customizer:
+      enabled: true

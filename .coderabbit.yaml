@@ -16,6 +16,9 @@ reviews:
     - path: "src/lib/predict/**"
       instructions: |
         AI 예측 코드예요. 돈 계산(합계, 잔액)은 AI가 아니라 코드가 해야 해요. API 키가 브라우저 코드로 새지 않는지, AI 응답을 검증하고 정리하는지, AI가 실패하면 규칙 기반 예측으로 넘어가는지 봐 주세요.
+    - path: "server/**"
+      instructions: |
+        Spring Boot API 서버예요. API의 JSON 모양이 src/lib/types.ts와 같은지, 모든 조회와 수정이 토큰의 사용자 id로 걸러지는지(다른 사람 데이터는 404), main에 들어간 Flyway 마이그레이션을 고치지 않았는지, 비밀이 응답과 로그에 남지 않는지 봐 주세요.
     - path: "src/components/**"
       instructions: |
         색은 hex 대신 globals.css의 토큰 클래스(bg-surface, text-ink-2 등)를 쓰고, 예산 상태는 색만이 아니라 아이콘과 글자로 함께 보여줘야 해요.
