@@ -11,7 +11,7 @@ import { formatDateKo } from "@/lib/date";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { PredictionResult } from "./PredictionResult";
+import { PredictionResult, isDateRangeValid } from "./PredictionResult";
 import { BudgetImpactCard } from "./BudgetImpactCard";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -76,7 +76,7 @@ export function NewEventScreen() {
 
   function save() {
     // 두 번 눌러도 한 번만 저장한다
-    if (!result || savedRef.current) return;
+    if (!result || !isDateRangeValid(result.prediction) || savedRef.current) return;
     savedRef.current = true;
     addEvent(result.prediction, result.source);
     router.push(`/?date=${result.prediction.startDate}`);
@@ -152,17 +152,19 @@ export function NewEventScreen() {
 
         {step === "result" && result && (
           <>
-            <PredictionResult response={result} />
+            <PredictionResult
+              response={result}
+              onChange={(prediction) => setResult({ ...result, prediction })}
+            />
             <BudgetImpactCard prediction={result.prediction} />
             <div className="grid grid-cols-[1fr_2fr] gap-2">
               <Button variant="secondary" size="lg" onClick={() => setStep("input")}>
                 다시 입력
               </Button>
-              <Button size="lg" onClick={save}>
+              <Button size="lg" onClick={save} disabled={!isDateRangeValid(result.prediction)}>
                 캘린더에 추가
               </Button>
             </div>
-            {/* TODO: 저장 전에 항목 금액·날짜를 직접 고칠 수 있게 하기 */}
           </>
         )}
       </div>
