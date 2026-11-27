@@ -25,9 +25,12 @@ COPY --from=build /workspace/extracted/application/ ./
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # JDK AOT 캐시 학습 실행: 앱을 한 번 띄웠다가 바로 끝내면서, 읽고 연결한 클래스를 app.aot에 저장한다.
-# 실행할 때 이 캐시를 쓰면 시작이 빨라진다. 이미지 빌드에는 DB가 없으니 DB에 붙지 않게 한다
+# 실행할 때 이 캐시를 쓰면 시작이 빨라진다. 이미지 빌드에는 DB가 없으니 DB에 붙지 않게 한다.
+# GitHub Actions의 Docker 빌드(BuildKit)는 RUN 단계에 OTEL_* 환경 변수(unix 소켓 주소)를 넣는데,
+# Spring Boot가 이를 트레이스 주소로 읽으면 시작에 실패하므로 학습 실행에서는 OTEL_* 환경 변수를 읽지 않는다
 RUN java -XX:MaxRAMPercentage=75 -XX:AOTCacheOutput=app.aot \
         -Dspring.context.exit=onRefresh \
+        -Dmanagement.opentelemetry.map-environment-variables=false \
         -Dplanny.jwt.allow-ephemeral-key=true \
         -Dspring.datasource.url=jdbc:postgresql://localhost:5432/aot-training \
         -Dspring.flyway.enabled=false \

@@ -102,3 +102,8 @@ tasks.register<JavaExec>("generateJwtKey") {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.test {
+    // ApiDocsTests가 만드는 OpenAPI 문서. 출력으로 알려 둬야 빌드 캐시에서 테스트 결과를 가져올 때 이 파일도 함께 복원된다
+    outputs.file(layout.buildDirectory.file("openapi.json"))
+}
