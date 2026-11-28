@@ -6,6 +6,7 @@ import { IconLoader2, IconSparkles } from "@tabler/icons-react";
 import type { PredictResponse } from "@/lib/types";
 import { useAppData } from "@/lib/store";
 import { fetchPrediction } from "@/lib/api";
+import { MAX_TEXT_LENGTH } from "@/lib/predict/limits";
 import { buildHistorySummary } from "@/lib/history";
 import { formatDateKo } from "@/lib/date";
 import { Card } from "@/components/ui/Card";
@@ -102,6 +103,7 @@ export function NewEventScreen() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="예: 다음 주 토요일 성수동 친구 모임"
+                  maxLength={MAX_TEXT_LENGTH}
                   rows={3}
                   className="mt-1.5 w-full resize-none rounded-2xl bg-surface-2 p-3 text-base outline-none placeholder:text-muted focus:ring-2 focus:ring-primary"
                 />
