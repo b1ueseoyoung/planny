@@ -1,6 +1,6 @@
 import { IconAlertTriangle, IconMapPin, IconSparkles, IconUsers } from "@tabler/icons-react";
 import type { EventPrediction, ISODate, PredictResponse } from "@/lib/types";
-import { addDays, diffDays, formatRangeKo } from "@/lib/date";
+import { addDays, diffDays, formatRangeKo, parseISODate, toISODate } from "@/lib/date";
 import { formatWon } from "@/lib/format";
 import { predictionTotal } from "@/lib/forecast";
 import { tangibleLabel } from "@/lib/home-summary";
@@ -8,9 +8,19 @@ import { CATEGORY_LABEL, EVENT_TYPE_LABEL } from "@/lib/categories";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 
-/** 종료일이 시작일과 같거나 뒤인지 (날짜는 'YYYY-MM-DD'라 글자 비교로 순서가 맞다) */
+// 날짜 계산과 월 이동이 지원하는 네 자리 연도 범위. 입력 중인 연도는 저장하지 않는다.
+const MIN_DATE = "1000-01-01";
+const MAX_DATE = "9998-12-31";
+
+function isSupportedDate(date: ISODate): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < MIN_DATE || date > MAX_DATE) return false;
+  const { y, m, d } = parseISODate(date);
+  return toISODate(y, m, d) === date;
+}
+
+/** 실제로 있는 지원 범위의 날짜이고, 종료일이 시작일과 같거나 뒤인지 */
 export function isDateRangeValid(prediction: EventPrediction): boolean {
-  return prediction.endDate >= prediction.startDate;
+  return isSupportedDate(prediction.startDate) && isSupportedDate(prediction.endDate) && prediction.endDate >= prediction.startDate;
 }
 
 /** 한 항목에 넣을 수 있는 가장 큰 금액 (잘못 눌러 0이 줄줄이 붙는 것 막기) */
@@ -43,7 +53,7 @@ export function PredictionResult({
   // 종료일이 이미 잘못돼 있으면 그 기간은 믿을 수 없으니 시작일과 같은 날로 맞춘다.
   function setStartDate(startDate: ISODate) {
     const days = isDateRangeValid(p) ? diffDays(p.endDate, p.startDate) : 0;
-    onChange?.({ ...p, startDate, endDate: addDays(startDate, days) });
+    onChange?.({ ...p, startDate, endDate: isSupportedDate(startDate) ? addDays(startDate, days) : startDate });
   }
 
   // 종료일은 바로 고치지 않는다. 키보드로 "14"를 치면 중간에 "01"이 먼저 들어오는데,
@@ -82,6 +92,8 @@ export function PredictionResult({
             <input
               type="date"
               value={p.startDate}
+              min={MIN_DATE}
+              max={MAX_DATE}
               onChange={(e) => e.target.value && setStartDate(e.target.value)}
               className="mt-1 block h-10 w-full rounded-xl bg-surface-2 px-2 text-sm outline-none focus:ring-2 focus:ring-primary"
             />
@@ -91,7 +103,8 @@ export function PredictionResult({
             <input
               type="date"
               value={p.endDate}
-              min={p.startDate}
+              min={isSupportedDate(p.startDate) ? p.startDate : MIN_DATE}
+              max={MAX_DATE}
               onChange={(e) => e.target.value && setEndDate(e.target.value)}
               className="mt-1 block h-10 w-full rounded-xl bg-surface-2 px-2 text-sm outline-none focus:ring-2 focus:ring-primary"
             />
@@ -101,7 +114,9 @@ export function PredictionResult({
           ) : (
             <p role="alert" className="col-span-2 inline-flex items-center gap-1 text-xs font-medium text-critical">
               <IconAlertTriangle size={14} aria-hidden />
-              종료일이 시작일보다 앞서요
+              {!isSupportedDate(p.startDate) || !isSupportedDate(p.endDate)
+                ? "1000년부터 9998년 사이의 올바른 날짜를 입력해 주세요"
+                : "종료일이 시작일보다 앞서요"}
             </p>
           )}
         </div>
