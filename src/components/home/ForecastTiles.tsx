@@ -65,7 +65,9 @@ function ForecastChart({ data, today, forecast }: { data: AppData; today: ISODat
   for (const d of days) cumulative.push(cumulative[cumulative.length - 1] + d.amount);
 
   const n = days.length;
-  const actualCount = days.filter((d) => d.kind === "actual").length;
+  const actualCount = days.filter((d) => d.date <= today).length;
+  const actualTotal = days.reduce((sum, d) => sum + d.actualAmount, 0);
+  const todayPending = actualCount > 0 ? cumulative[actualCount] - actualTotal : 0;
   const total = cumulative[n];
   const max = Math.max(budget, total, 1) * 1.1;
   const x = (i: number) => (i / n) * (W - 8);
@@ -76,8 +78,13 @@ function ForecastChart({ data, today, forecast }: { data: AppData; today: ISODat
       .map((v, k) => `${k === 0 ? "M" : "L"}${x(from + k).toFixed(1)},${y(v).toFixed(1)}`)
       .join(" ");
 
-  const actualPath = actualCount > 0 ? path(0, actualCount) : "";
-  const predictedPath = actualCount < n ? path(actualCount, n) : "";
+  // 오늘은 실제 지출과 미결제 일정이 함께 있을 수 있다. 실선은 실지출에서 멈춘다.
+  const actualPath = actualCount > 0
+    ? `${path(0, actualCount - 1)} L${x(actualCount).toFixed(1)},${y(actualTotal).toFixed(1)}`
+    : "";
+  const predictedPath = todayPending > 0
+    ? `M${x(actualCount).toFixed(1)},${y(actualTotal).toFixed(1)} ${path(actualCount, n).replace(/^M/, "L")}`
+    : actualCount < n ? path(actualCount, n) : "";
   const budgetY = y(budget);
   const endY = y(total);
   const labelsClash = Math.abs(endY - budgetY) < 16;
@@ -108,9 +115,9 @@ function ForecastChart({ data, today, forecast }: { data: AppData; today: ISODat
       {predictedPath && (
         <path d={predictedPath} fill="none" stroke="var(--primary)" strokeWidth={2.5} strokeDasharray="5 5" strokeLinecap="round" />
       )}
-      {actualCount > 0 && actualCount < n && (
+      {actualCount > 0 && (actualCount < n || todayPending > 0) && (
         <>
-          <circle cx={x(actualCount)} cy={y(cumulative[actualCount])} r={4} fill="var(--surface)" stroke="var(--primary)" strokeWidth={2} />
+          <circle cx={x(actualCount)} cy={y(actualTotal)} r={4} fill="var(--surface)" stroke="var(--primary)" strokeWidth={2} />
           <text x={x(actualCount)} y={H - 2} textAnchor="middle" fontSize={10} fill="var(--muted)">
             오늘
           </text>
