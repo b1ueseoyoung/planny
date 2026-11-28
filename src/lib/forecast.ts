@@ -89,13 +89,15 @@ export interface DaySpend {
   date: ISODate;
   amount: number;
   kind: "actual" | "predicted";
+  /** 합계에 포함된 실제 지출. 오늘 미결제 일정과 실지출이 섞여도 그래프에서 구분한다. */
+  actualAmount: number;
   /** 이 날에 걸친 일정 */
   events: CalendarEvent[];
 }
 
 /**
  * 날짜별 돈 (캘린더 점, 주간 합계, 누적 그래프용).
- * 내일부터는 평소 생활비 하루 평균 + 그날 시작하는 일정의 예상 비용으로, computeMonthForecast와 같은 기준이다.
+ * 오늘은 실제 지출 + 아직 거래가 없는 오늘 일정, 내일부터는 평소 생활비 + 그날 시작하는 일정 비용이다.
  * 여러 날 일정은 월말 예측과 맞추려고 비용을 시작일에 전부 잡는다.
  */
 export function dailySpend(data: AppData, from: ISODate, to: ISODate, today: ISODate): DaySpend[] {
@@ -109,14 +111,23 @@ export function dailySpend(data: AppData, from: ISODate, to: ISODate, today: ISO
   const days: DaySpend[] = [];
   for (let date = from; date <= to; date = addDays(date, 1)) {
     const events = data.events.filter((e) => e.startDate <= date && date <= e.endDate);
-    if (date <= today) {
-      days.push({ date, amount: actual[date] ?? 0, kind: "actual", events });
-      continue;
-    }
     const eventsCost = events
       .filter((e) => e.startDate === date && e.prediction && isUpcoming(data, e, today))
       .reduce((sum, e) => sum + predictionTotal(e.prediction!), 0);
-    days.push({ date, amount: Math.round(routine + eventsCost), kind: "predicted", events });
+    const actualAmount = date <= today ? actual[date] ?? 0 : 0;
+    if (date < today) {
+      days.push({ date, amount: actualAmount, actualAmount, kind: "actual", events });
+    } else if (date === today) {
+      days.push({
+        date,
+        amount: actualAmount + eventsCost,
+        actualAmount,
+        kind: eventsCost > 0 ? "predicted" : "actual",
+        events,
+      });
+    } else {
+      days.push({ date, amount: Math.round(routine + eventsCost), actualAmount, kind: "predicted", events });
+    }
   }
   return days;
 }
