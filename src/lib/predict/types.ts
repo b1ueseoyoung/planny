@@ -20,7 +20,13 @@ export interface UnderstoodEvent {
   headcount: number | null;
   payer: Payer;
   /** 이 일정에 드는 지출 항목과 사용자 본인이 낼 대략 금액 */
-  items: { category: Category; label: string; estimate: number }[];
+  items: {
+    category: Category;
+    label: string;
+    estimate: number;
+    /** 규칙이 문장에서 읽은 본인 금액/무료 조건. 과거 평균으로 덮지 않는다. */
+    amountSource?: "user";
+  }[];
   /** 금액을 이렇게 잡은 근거 */
   notes: string[];
   savingTips: { label: string; amount: number }[];

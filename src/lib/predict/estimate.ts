@@ -1,5 +1,5 @@
 // 이해한 일정(UnderstoodEvent)에 최종 금액을 정한다.
-// 원칙: 비슷한 지난 일정 기록이 있으면 기록이 먼저, 없으면 AI(또는 규칙)의 추정. 계산은 전부 코드로.
+// 원칙: 문장에 명시한 본인 금액 → 비슷한 지난 일정 기록 → AI(또는 규칙)의 추정. 계산은 전부 코드로.
 // TODO: 인원·기간이 다르면 기록을 비례해서 조정하기, 예상 vs 실제 지출을 비교해서 보정하기
 import type { Category, EventPrediction, HistorySummary, PredictedItem } from "../types";
 import { EVENT_TYPE_LABEL } from "../categories";
@@ -45,7 +45,12 @@ export function estimateCosts(u: UnderstoodEvent, history: HistorySummary, by: U
 
   const fromHistory: string[] = [];
   const fromEstimate: string[] = [];
+  const fromUser: string[] = [];
   const items: PredictedItem[] = u.items.map((item) => {
+    if (item.amountSource === "user") {
+      fromUser.push(item.label);
+      return { category: item.category, label: item.label, amount: item.estimate };
+    }
     const average = canUseHistory ? categoryAverage(similar.events, item.category) : null;
     if (average !== null) {
       fromHistory.push(item.label);
@@ -56,6 +61,9 @@ export function estimateCosts(u: UnderstoodEvent, history: HistorySummary, by: U
   });
 
   const reasons: string[] = [];
+  if (fromUser.length > 0) {
+    reasons.push(`${josa(fromUser.join(", "), "은", "는")} 문장에 적은 금액이나 무료 조건을 그대로 반영했어요`);
+  }
   if (fromHistory.length > 0) {
     reasons.push(`${josa(fromHistory.join(", "), "은", "는")} 지난 ${similar.what} ${similar.events.length}번 평균으로 잡았어요`);
   }
