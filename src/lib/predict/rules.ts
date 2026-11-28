@@ -5,6 +5,7 @@ import type { Category, EventType, ISODate, PredictRequest } from "../types";
 import { addDays, addMonths, dayOfWeek, monthKey, parseISODate, toISODate } from "../date";
 import type { Payer, UnderstoodEvent } from "./types";
 import { cleanPeople } from "./people";
+import { applyExplicitCosts } from "./explicit-costs";
 
 type Item = UnderstoodEvent["items"][number];
 
@@ -241,6 +242,7 @@ export function understandByRules(req: PredictRequest): UnderstoodEvent {
     if (!headcount) notes.push("인원을 몰라서 2명분으로 잡았어요");
   }
   if (payer === "others") items = items.filter((i) => i.category !== "meal" && i.category !== "cafe");
+  items = applyExplicitCosts(text, items);
 
   // 제목: 날짜 표현과 조사를 뺀 나머지
   let title = text;

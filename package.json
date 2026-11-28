@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "eval:prediction": "node --import tsx evals/prediction/run.mts",
-    "test:prediction-eval": "node --import tsx --test tests/prediction-eval.test.ts"
+    "test:prediction-eval": "node --import tsx --test tests/prediction-eval.test.ts",
+    "test:explicit-costs": "node --import tsx --test tests/explicit-costs.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.13.0",

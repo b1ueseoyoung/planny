@@ -7,6 +7,7 @@ import { formatDateKo, parseISODate, toISODate } from "../date";
 import type { UnderstoodEvent } from "./types";
 import { cleanPeople } from "./people";
 import { formatPromptExamples } from "./examples";
+import { applyExplicitCosts } from "./explicit-costs";
 
 /** AI가 반드시 이 모양의 JSON으로 답하게 하는 스키마 (UnderstoodEvent와 같은 모양) */
 export const UnderstoodEventSchema = z.object({
@@ -86,10 +87,10 @@ export function sanitizeUnderstood(raw: UnderstoodEventRaw, req: PredictRequest)
     people,
     headcount,
     payer: raw.payer,
-    items: raw.items
+    items: applyExplicitCosts(req.text, raw.items
       .map((i) => ({ category: i.category, label: i.label.trim() || CATEGORY_LABEL[i.category], estimate: money(i.estimate) }))
       .filter((i) => i.estimate > 0)
-      .slice(0, 10),
+      .slice(0, 10)),
     notes: raw.notes.map((n) => n.trim()).filter(Boolean).slice(0, 4),
     savingTips: raw.savingTips
       .map((t) => ({ label: t.label.trim(), amount: money(t.amount) }))
