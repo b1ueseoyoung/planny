@@ -43,3 +43,6 @@ next-env.d.ts
 
 # claude code 개인 설정
 .claude/settings.local.json
+
+# 합성 데이터 평가 결과 (실행할 때 로컬에 생성)
+/evals/prediction/results/
